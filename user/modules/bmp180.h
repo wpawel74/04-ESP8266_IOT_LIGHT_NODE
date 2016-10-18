@@ -31,7 +31,7 @@
 #define CONVERSION_TIME				5
 #define BMP180_W				0xEE
 #define BMP180_R				0xEF
-#define BMP180_CHIP_ID				0x55
+#define BMP180_CHIP_ID				0x5502
 #define BMP180_VERSION_REG			0xD1
 #define BMP180_CHIP_ID_REG			0xD0
 #define BMP180_CTRL_REG				0xF4

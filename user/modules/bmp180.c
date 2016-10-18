@@ -200,7 +200,6 @@ int16_t ICACHE_FLASH_ATTR BMP180_readExRawValue(uint8_t cmd, enum PRESSURE_RESOL
 }
 
 bool ICACHE_FLASH_ATTR BMP180_Init(){
-	i2c_master_init();
 	int16_t version = BMP180_readRegister16(BMP180_CHIP_ID_REG);
 	if (version != BMP180_CHIP_ID) {
 #ifdef BMP180_DEBUG
@@ -209,7 +208,7 @@ bool ICACHE_FLASH_ATTR BMP180_Init(){
 				  BMP180_CHIP_ID, version);
 		os_printf(temp);
 #endif
-	    return 0;
+		return 0;
 	}
 
 	if (!BMP180_readRegister16(BMP180_VERSION_REG))
