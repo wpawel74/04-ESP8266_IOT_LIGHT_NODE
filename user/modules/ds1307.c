@@ -59,7 +59,6 @@ static bool ICACHE_FLASH_ATTR ds1307_send(uint8 *data, uint8 len) {
 // read a number of bytes from the rtc over i2c
 // returns true to indicate success
 static bool ICACHE_FLASH_ATTR ds1307_recv(uint8 *data, uint8 len) {
-	
 	int loop;
 
 	// signal i2c start
@@ -84,7 +83,6 @@ static bool ICACHE_FLASH_ATTR ds1307_recv(uint8 *data, uint8 len) {
 	i2c_master_stop();
 
 	return true;
-
 }
 
 // set the time on the rtc
@@ -92,7 +90,6 @@ static bool ICACHE_FLASH_ATTR ds1307_recv(uint8 *data, uint8 len) {
 // I suggest using GMT and applying timezone and DST when read back
 // returns true to indicate success
 bool ICACHE_FLASH_ATTR ds1307_setTime(struct tm *time) {
-	
 	uint8 data[8];
 
 	// start register
@@ -107,7 +104,6 @@ bool ICACHE_FLASH_ATTR ds1307_setTime(struct tm *time) {
 	data[7] = decToBcd(time->tm_year - 100);
 
 	return ds1307_send(data, 8);
-
 }
 
 // get a byte containing just the requested bits
@@ -193,8 +189,6 @@ bool ICACHE_FLASH_ATTR ds1307_setSquarewaveFreq(uint8 freq) {
 // get the time from the rtc, populates a supplied tm struct
 // returns true to indicate success
 bool ICACHE_FLASH_ATTR ds1307_getTime(struct tm *time) {
-
-	int loop;
 	uint8 data[7];
 
 	// start register address
@@ -230,5 +224,4 @@ bool ICACHE_FLASH_ATTR ds1307_getTime(struct tm *time) {
 	//applyTZ(time);
 
 	return true;
-	
 }

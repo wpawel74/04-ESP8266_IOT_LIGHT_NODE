@@ -94,4 +94,3 @@ void ICACHE_FLASH_ATTR mqttPublishedCb(uint32_t *args)
 //    MQTT_Client* client = (MQTT_Client*)args;
 	os_printf("MQTT: Published\r\n");
 }
-
