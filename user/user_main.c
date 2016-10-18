@@ -14,6 +14,7 @@ some pictures of cats.
 */
 
 #include <esp8266.h>
+#include <i2c_master.h>
 #include "httpd.h"
 #include "io.h"
 #include "httpdespfs.h"
@@ -173,6 +174,7 @@ void user_init(void) {
 	CFG_Load();
 	ioInit();
 //	captdnsInit();
+	i2c_master_gpio_init();
 
 	// 0x40200000 is the base address for spi flash memory mapping, ESPFS_POS is the position
 	// where image is written in flash that is defined in Makefile.
@@ -203,7 +205,7 @@ void user_init(void) {
 	if(sysCfg.sensor_ds18b20_enable) 
 		ds_init(30000);
 
-	if(sysCfg.sensor_bmp180_enable) 
+	//if(sysCfg.sensor_bmp180_enable) 
 		BMP180_Init();
 
 	broadcastd_init();
