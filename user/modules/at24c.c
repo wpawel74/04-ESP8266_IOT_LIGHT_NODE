@@ -16,7 +16,6 @@
 // next either send the data to be written, or start a read instead
 // returns true to indicate success
 static bool ICACHE_FLASH_ATTR at24c_setAddr(uint16 addr) {
-
 	uint8 loop;
 	uint8 data[2];
 
@@ -49,7 +48,6 @@ static bool ICACHE_FLASH_ATTR at24c_setAddr(uint16 addr) {
 // read from the current position
 // returns true to indicate success
 bool ICACHE_FLASH_ATTR at24c_readNextBytes(uint8 *data, uint16 len) {
-
 	int loop;
 
 	// signal i2c start
@@ -105,7 +103,6 @@ void ICACHE_FLASH_ATTR at24c_writeWait() {
 // optionally wait for the eeprom to complete the write
 // returns true to indicate success
 bool ICACHE_FLASH_ATTR at24c_writeInPage(uint16 addr, uint8* data, uint8 len, bool wait) {
-
 	int loop;
 
 	// set data address (includes i2c setup,
@@ -140,7 +137,6 @@ bool ICACHE_FLASH_ATTR at24c_writeInPage(uint16 addr, uint8* data, uint8 len, bo
 // eeprom!
 // returns true to indicate success
 bool ICACHE_FLASH_ATTR at24c_writeAcrossPages(uint16 addr, uint8* data, uint16 len, bool wait) {
-
 	uint8 wlen;
 
 	// work out number of bytes available in starting page
@@ -168,7 +164,6 @@ bool ICACHE_FLASH_ATTR at24c_writeAcrossPages(uint16 addr, uint8* data, uint16 l
 // set an area of eeprom to specified value (like memset)
 // optionally wait for completion of last write
 bool ICACHE_FLASH_ATTR at24c_setBytes(uint16 addr, uint8 val, uint16 len, bool wait) {
-
 	uint8 wlen;
 	uint8 data[AT24C_PAGESIZE];
 
