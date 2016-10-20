@@ -1,8 +1,8 @@
 //Copyright 2015 <>< Charles Lohr, See LICENSE file.
 //WS2812 sender that abuses the I2S interface on the WS2812.
 
-#ifndef _WS2812I2S_TEST
-#define _WS2812I2S_TEST
+#ifndef WS2812I2S_H
+#define WS2812I2S_H
 
 //Stuff that should be for the header:
 
@@ -29,7 +29,7 @@
 // timing for SK6812 LEDs, always uses 4bit samples
 //#define SK6812
 
-void ICACHE_FLASH_ATTR ws2812_i2s_init();
+void ICACHE_FLASH_ATTR ws2812_i2s_init(void);
 void ws2812_i2s_push( uint8_t * buffer, uint16_t buffersize ); //Buffersize = Nr LEDs * 3
 
-#endif
+#endif // WS2812I2S_H

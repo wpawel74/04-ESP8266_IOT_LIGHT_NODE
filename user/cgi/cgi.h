@@ -46,4 +46,13 @@ int cgiSensorSettings(HttpdConnData *connData);
 void tplBMP180(HttpdConnData *connData, char *token, void **arg);
 int cgiBMP180(HttpdConnData *connData);
 
+void tplRTC(HttpdConnData *connData, char *token, void **arg);
+int cgiRTC(HttpdConnData *connData);
+
+int cgiLightSettings(HttpdConnData *connData);
+void tplLightSettings(HttpdConnData *connData, char *token, void **arg);
+
+int cgiLight(HttpdConnData *connData);
+void tplLight(HttpdConnData *connData, char *token, void **arg);
+
 #endif // CGI_H

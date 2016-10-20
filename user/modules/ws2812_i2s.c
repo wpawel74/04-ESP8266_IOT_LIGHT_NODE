@@ -272,10 +272,10 @@ LOCAL void slc_isr(void) {
 #endif
 
 //Initialize I2S subsystem for DMA circular buffer use
-void ICACHE_FLASH_ATTR ws2812_i2s_init()
+void ICACHE_FLASH_ATTR ws2812_i2s_init(void)
 {
-	int x, y;
-	
+	int x;
+
 	//Reset DMA
 	SET_PERI_REG_MASK(SLC_CONF0, SLC_RXLINK_RST);//|SLC_TXLINK_RST);
 	CLEAR_PERI_REG_MASK(SLC_CONF0, SLC_RXLINK_RST);//|SLC_TXLINK_RST);

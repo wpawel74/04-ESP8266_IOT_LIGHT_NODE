@@ -15,6 +15,9 @@ some pictures of cats.
 
 #include <esp8266.h>
 #include <i2c_master.h>
+#include <uart.h>
+
+#include "user_config.h"
 #include "httpd.h"
 #include "io.h"
 #include "httpdespfs.h"
@@ -28,14 +31,14 @@ some pictures of cats.
 #include "webpages-espfs.h"
 #include "cgiwebsocket.h"
 #include "config.h"
+#include "broadcastd.h"
 #include "mqtt.h"
 #include "mqtt_cb.h"
 #include "dht22.h"
 #include "ds18b20.h"
 #include "bmp180.h"
-#include "broadcastd.h"
-#include "uart.h"
-#include "ws2812.h"
+#include "light.h"
+#include "ds1307.h"
 
 //The example can print out the heap use every 3 seconds. You can use this to catch memory leaks.
 //#define SHOW_HEAP_USE
@@ -125,20 +128,6 @@ HttpdBuiltInUrl builtInUrls[]={
 	{"/config/wifi/connect.cgi", cgiWiFiConnect, NULL},
 	{"/config/wifi/connstatus.cgi", cgiWiFiConnStatus, NULL},
 	{"/config/wifi/setmode.cgi", cgiWiFiSetMode, NULL},
-
-	{"/control/ui.tpl", cgiEspFsTemplate, tplUI},
-	{"/control/relay.tpl", cgiEspFsTemplate, tplGPIO},
-	{"/control/relay.cgi", cgiGPIO, NULL},
-
-//	{"/control/dht22.tpl", cgiEspFsTemplate, tplDHT},
-//	{"/control/dht22.cgi", cgiDHT22, NULL}, 
-	{"/control/ds18b20.tpl", cgiEspFsTemplate, tplDS18b20},
-	{"/control/ds18b20.cgi", cgiDS18b20, NULL}, 
-	{"/control/bmp180.tpl", cgiEspFsTemplate, tplBMP180},
-	{"/control/bmp180.cgi", cgiBMP180, NULL}, 
-	{"/control/state.cgi", cgiState, NULL}, 
-	{"/control/reset.cgi", cgiReset, NULL}, 
-
 	{"/config/mqtt.tpl", cgiEspFsTemplate, tplMQTT},
 	{"/config/mqtt.cgi", cgiMQTT, NULL},
 	{"/config/httpd.tpl", cgiEspFsTemplate, tplHTTPD},
@@ -151,6 +140,36 @@ HttpdBuiltInUrl builtInUrls[]={
 	{"/config/relay.cgi", cgiRLYSettings, NULL},
 	{"/config/sensor.tpl", cgiEspFsTemplate, tplSensorSettings},
 	{"/config/sensor.cgi", cgiSensorSettings, NULL},
+	{"/config/rtc.tpl", cgiEspFsTemplate, tplRTC},
+	{"/config/rtc.cgi", cgiRTC, NULL},
+	{"/config/light.tpl", cgiEspFsTemplate, tplLightSettings},
+	{"/config/light.cgi", cgiLightSettings, NULL},
+
+	{"/control/ui.tpl", cgiEspFsTemplate, tplUI},
+
+#ifdef CONFIG_RELAYS
+	{"/control/relay.tpl", cgiEspFsTemplate, tplGPIO},
+	{"/control/relay.cgi", cgiGPIO, NULL},
+#endif // CONFIG_RELAYS
+#ifdef CONFIG_DTH22
+	{"/control/dht22.tpl", cgiEspFsTemplate, tplDHT},
+	{"/control/dht22.cgi", cgiDHT22, NULL}, 
+#endif // CONFIG_DTH22
+#ifdef CONFIG_DS18B20
+	{"/control/ds18b20.tpl", cgiEspFsTemplate, tplDS18b20},
+	{"/control/ds18b20.cgi", cgiDS18b20, NULL}, 
+#endif // CONFIG_DS18B20
+#ifdef CONFIG_BMP180
+	{"/control/bmp180.tpl", cgiEspFsTemplate, tplBMP180},
+	{"/control/bmp180.cgi", cgiBMP180, NULL}, 
+#endif // CONFIG_BMP180
+
+	{"/control/light.tpl", cgiEspFsTemplate, tplLight},
+	{"/control/light.cgi", cgiLight, NULL},
+
+	{"/control/state.cgi", cgiState, NULL}, 
+	{"/control/reset.cgi", cgiReset, NULL}, 
+
 
 	{"*", cgiEspFsHook, NULL}, //Catch-all cgi function for the filesystem
 	{NULL, NULL, NULL}
@@ -169,7 +188,7 @@ static void ICACHE_FLASH_ATTR prHeapTimerCb(void *arg) {
 void user_init(void) {
 
 	//uart_init(BIT_RATE_115200,BIT_RATE_115200);
-	stdoutInit();
+	//stdoutInit();
 	os_delay_us(100000);
 	CFG_Load();
 	ioInit();
@@ -182,14 +201,42 @@ void user_init(void) {
 	espFsInit((void*)(0x40200000 + ESPFS_POS));
 #else
 	espFsInit((void*)(webpages_espfs_start));
-#endif
-	httpdInit(builtInUrls, 80); //
-	//httpdInit(builtInUrls, sysCfg.httpd_port);
+#endif // ESPFS_POS
+
+	httpdInit(builtInUrls, 80); //sysCfg.httpd_port);
 
 	if(sysCfg.ntp_enable) {
 //		sntp_init(sysCfg.ntp_tz);	//timezone
 	}
 
+#ifdef CONFIG_DTH22
+	if(sysCfg.sensor_dht22_enable) 
+		DHTInit(SENSOR_DHT22, 30000);
+#endif // CONFIG_DTH22
+#ifdef CONFIG_DS18B20
+	if(sysCfg.sensor_ds18b20_enable) 
+		ds_init(30000);
+#endif // CONFIG_DS18B20
+#ifdef CONFIG_BMP180
+	if(sysCfg.sensor_bmp180_enable){
+		if( BMP180_Init() ){
+			int32_t temp = BMP180_GetTemperature();
+			os_printf( "BMP180: temperature %d.%d C, air pressure %d Pa\n", temp/10, temp - ((temp/10)*10), BMP180_GetPressure(OSS_0));
+		}
+	}
+#endif // CONFIG_BMP180
+#ifdef CONFIG_DS1307
+	{
+	struct tm tm;
+	if( ds1307_getTime(&tm) ){
+		os_printf( "RTC: date %d/%d/%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec );
+	}
+	}
+#endif // CONFIG_DS1307
+
+	light_ini();
+
+#ifdef CONFIG_MQTT
 	if(sysCfg.mqtt_enable) {
 		MQTT_InitConnection(&mqttClient, (uint8_t *)sysCfg.mqtt_host, sysCfg.mqtt_port, sysCfg.mqtt_use_ssl );
 		MQTT_InitClient(&mqttClient, (uint8_t *)sysCfg.mqtt_devid, (uint8_t *)sysCfg.mqtt_user, (uint8_t *)sysCfg.mqtt_pass, sysCfg.mqtt_keepalive,1);
@@ -198,19 +245,8 @@ void user_init(void) {
 		MQTT_OnPublished(&mqttClient, mqttPublishedCb);
 		MQTT_OnData(&mqttClient, mqttDataCb);
 	}
-
-	if(sysCfg.sensor_dht22_enable) 
-		DHTInit(SENSOR_DHT22, 30000);
-
-	if(sysCfg.sensor_ds18b20_enable) 
-		ds_init(30000);
-
-	//if(sysCfg.sensor_bmp180_enable) 
-		BMP180_Init();
-
 	broadcastd_init();
-
-	ws2812_init();
+#endif // CONFIG_MQTT
 
 #ifdef SHOW_HEAP_USE
 	os_timer_disarm(&prHeapTimer);

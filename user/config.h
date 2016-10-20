@@ -54,6 +54,12 @@ typedef struct {
 	daySchedule weekSched[7]; // 7 days per week
 }  weekSchedule;
 
+typedef enum POWER_SOURCE {
+	DONT_CARE	= 0,
+	RELAY_1		= 1,
+	RELAY_2		= 2
+} POWER_SOURCE;
+
 typedef struct{
 
 	//4 byte alignment, hence uint32_t
@@ -136,6 +142,13 @@ typedef struct{
 	uint32_t thermostat3hysteresislow;
 	weekSchedule thermostat3schedule;
 
+	uint32_t light_driver_enable;
+	POWER_SOURCE light_power_supply;
+	uint32_t light_delay_power_on;
+	uint32_t light_delay_power_off;
+	uint32_t light_udp_port;
+	uint32_t light_chain_size;
+
 } SYSCFG;
 
 typedef struct {
@@ -145,6 +158,8 @@ typedef struct {
 
 void CFG_Save();
 void CFG_Load();
+
+SYSCFG* config(void);
 
 extern SYSCFG sysCfg;
 
