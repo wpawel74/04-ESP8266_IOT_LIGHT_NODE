@@ -19,7 +19,8 @@ void ICACHE_FLASH_ATTR tplBMP180(HttpdConnData *connData, char *token, void **ar
 
 	os_strcpy(buff, "Unknown");
 	if (os_strcmp(token, "temperature")==0) {
-		os_sprintf(buff, "%d", BMP180_GetTemperature() );
+		int32_t temp = BMP180_GetTemperature();
+		os_sprintf(buff, "%d.%d", temp/10, temp - ((temp/10)*10) );
 	}
 	if (os_strcmp(token, "pressure")==0) {
 		os_sprintf(buff, "%d", BMP180_GetPressure(OSS_0));
@@ -29,13 +30,14 @@ void ICACHE_FLASH_ATTR tplBMP180(HttpdConnData *connData, char *token, void **ar
 
 int ICACHE_FLASH_ATTR cgiBMP180(HttpdConnData *connData) {
 	char buff[256];
+	int32_t temp = BMP180_GetTemperature();
 
 	httpdStartResponse(connData, 200);
 	httpdHeader(connData, "Content-Type", "text/json");
 	httpdHeader(connData, "Access-Control-Allow-Origin", "*");
 	httpdEndHeaders(connData);
 
-	os_sprintf(buff, "{ \n\"temperature\": \"%d\"\n , \n\"pressure\": \"%d\"\n}\n", BMP180_GetTemperature(), BMP180_GetPressure(OSS_0) );
+	os_sprintf(buff, "{ \n\"temperature\": \"%d.%d\"\n , \n\"pressure\": \"%d\"\n}\n", temp/10, temp - ((temp/10)*10), BMP180_GetPressure(OSS_0) );
 
 	httpdSend(connData, buff, -1);
 	return HTTPD_CGI_DONE;
