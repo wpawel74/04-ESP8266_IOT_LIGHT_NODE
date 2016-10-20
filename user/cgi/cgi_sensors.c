@@ -28,6 +28,8 @@ int ICACHE_FLASH_ATTR cgiSensorSettings(HttpdConnData *connData) {
 	len=httpdFindArg(connData->post->buff, "sensor-dht22-enable", buff, sizeof(buff));
 	sysCfg.sensor_dht22_enable = (len > 0) ? 1:0;
 
+	len=httpdFindArg(connData->post->buff, "sensor-bmp180-enable", buff, sizeof(buff));
+	sysCfg.sensor_bmp180_enable = (len > 0) ? 1:0;
 
 	len=httpdFindArg(connData->post->buff, "thermostat1-input", buff, sizeof(buff));
 	if (len>0) {
@@ -66,6 +68,10 @@ void ICACHE_FLASH_ATTR tplSensorSettings(HttpdConnData *connData, char *token, v
 
 	if (os_strcmp(token, "sensor-dht22-enable")==0) {
 		os_strcpy(buff, sysCfg.sensor_dht22_enable == 1 ? "checked" : "" );
+	}
+
+	if (os_strcmp(token, "sensor-bmp180-enable")==0) {
+		os_strcpy(buff, sysCfg.sensor_bmp180_enable == 1 ? "checked" : "" );
 	}
 
 	if (os_strcmp(token, "selectedds18b20")==0) {
