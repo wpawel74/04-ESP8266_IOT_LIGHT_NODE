@@ -16,55 +16,55 @@
 void ICACHE_FLASH_ATTR tplMQTT(HttpdConnData *connData, char *token, void **arg) {
 	char buff[128];
 	if (token==NULL) return;
-	
+
 	os_strcpy(buff, "Unknown");
 
 	if (os_strcmp(token, "mqtt-enable")==0) {
-			os_sprintf(buff, "%d", (int)sysCfg.mqtt_enable);
+		os_sprintf(buff, "%d", (int)sysCfg.mqtt_enable);
 	}
-	
+
 	if (os_strcmp(token, "mqtt-use-ssl")==0) {
-			os_sprintf(buff,"%d", (int)sysCfg.mqtt_use_ssl);
+		os_sprintf(buff,"%d", (int)sysCfg.mqtt_use_ssl);
 	}
 
 	if (os_strcmp(token, "mqtt-host")==0) {
-			os_strcpy(buff, (char *)sysCfg.mqtt_host);
+		os_strcpy(buff, (char *)sysCfg.mqtt_host);
 	}
 
 	if (os_strcmp(token, "mqtt-port")==0) {
-			os_sprintf(buff, "%d", (int)sysCfg.mqtt_port);
+		os_sprintf(buff, "%d", (int)sysCfg.mqtt_port);
 	}
 
 	if (os_strcmp(token, "mqtt-keepalive")==0) {
-			os_sprintf(buff, "%d", (int)sysCfg.mqtt_keepalive);
+		os_sprintf(buff, "%d", (int)sysCfg.mqtt_keepalive);
 	}
 
 	if (os_strcmp(token, "mqtt-devid")==0) {
-			os_strcpy(buff, (char *)sysCfg.mqtt_devid);
+		os_strcpy(buff, (char *)sysCfg.mqtt_devid);
 	}
 
 	if (os_strcmp(token, "mqtt-user")==0) {
-			os_strcpy(buff, (char *)sysCfg.mqtt_user);
+		os_strcpy(buff, (char *)sysCfg.mqtt_user);
 	}
 
 	if (os_strcmp(token, "mqtt-pass")==0) {
-			os_strcpy(buff, (char *)sysCfg.mqtt_pass);
+		os_strcpy(buff, (char *)sysCfg.mqtt_pass);
 	}
 
 	if (os_strcmp(token, "mqtt-relay-subs-topic")==0) {
-			os_strcpy(buff, (char *)sysCfg.mqtt_relay_subs_topic);
+		os_strcpy(buff, (char *)sysCfg.mqtt_relay_subs_topic);
 	}
 
 	if (os_strcmp(token, "mqtt-dht22-temp-pub-topic")==0) {
-			os_strcpy(buff, (char *)sysCfg.mqtt_dht22_temp_pub_topic);
+		os_strcpy(buff, (char *)sysCfg.mqtt_dht22_temp_pub_topic);
 	}
 
 	if (os_strcmp(token, "mqtt-dht22-humi-pub-topic")==0) {
-			os_strcpy(buff, (char *)sysCfg.mqtt_dht22_humi_pub_topic);
+		os_strcpy(buff, (char *)sysCfg.mqtt_dht22_humi_pub_topic);
 	}
 
 	if (os_strcmp(token, "mqtt-ds18b20-temp-pub-topic")==0) {
-			os_strcpy(buff, (char *)sysCfg.mqtt_ds18b20_temp_pub_topic);
+		os_strcpy(buff, (char *)sysCfg.mqtt_ds18b20_temp_pub_topic);
 	}
 
 	httpdSend(connData, buff, -1);
