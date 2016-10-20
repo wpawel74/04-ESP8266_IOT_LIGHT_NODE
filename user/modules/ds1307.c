@@ -4,28 +4,48 @@
 // richardaburton@gmail.com
 // See license.txt for license terms.
 //////////////////////////////////////////////////
-
+#include <osapi.h>
 #include <c_types.h>
 #include <i2c_master.h>
 
 #include "ds1307.h"
 
-#include <osapi.h>
+#define DS1307_ADDR			0x68
+
+#define DS1307_CTRL_OUTPUT		0x80
+#define DS1307_CTRL_SQUAREWAVE		0x10
+#define DS1307_CTRL_SQWAVE_32768HZ	0x03
+#define DS1307_CTRL_SQWAVE_8192HZ	0x02
+#define DS1307_CTRL_SQWAVE_4096HZ	0x01
+#define DS1307_CTRL_SQWAVE_1HZ		0x00
+
+#define DS1307_OUTPUT_LEVEL_1		0x80
+#define DS1307_OUTPUT_LEVEL_0		0x00
+
+#define DS1307_ADDR_TIME		0x00
+#define DS1307_ADDR_CONTROL		0x07
+
+#define DS1307_SET			0
+#define DS1307_CLEAR			1
+#define DS1307_REPLACE			2
+
+#define DS1307_12HOUR_FLAG		0x40
+#define DS1307_12HOUR_MASK		0x1f
+#define DS1307_PM_FLAG			0x20
 
 // convert normal decimal to binary coded decimal
 static uint8 ICACHE_FLASH_ATTR decToBcd(uint8 dec) {
-  return(((dec / 10) * 16) + (dec % 10));
+	return(((dec / 10) * 16) + (dec % 10));
 }
 
 // convert binary coded decimal to normal decimal
 static uint8 ICACHE_FLASH_ATTR bcdToDec(uint8 bcd) {
-  return(((bcd / 16) * 10) + (bcd % 16));
+	return(((bcd / 16) * 10) + (bcd % 16));
 }
 
 // send a number of bytes to the rtc over i2c
 // returns true to indicate success
 static bool ICACHE_FLASH_ATTR ds1307_send(uint8 *data, uint8 len) {
-
 	int loop;
 
 	// signal i2c start
@@ -53,7 +73,6 @@ static bool ICACHE_FLASH_ATTR ds1307_send(uint8 *data, uint8 len) {
 	i2c_master_stop();
 
 	return true;
-
 }
 
 // read a number of bytes from the rtc over i2c
