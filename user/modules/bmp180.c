@@ -28,6 +28,24 @@
 #include <i2c_master.h>
 #include "bmp180.h"
 
+#define CONVERSION_TIME				5
+#define BMP180_W				0xEE
+#define BMP180_R				0xEF
+#define BMP180_CHIP_ID				0x5502
+#define BMP180_VERSION_REG			0xD1
+#define BMP180_CHIP_ID_REG			0xD0
+#define BMP180_CTRL_REG				0xF4
+#define BMP180_DATA_REG				0xF6
+#define BMP_CMD_MEASURE_TEMP			0x2E	// Max conversion time 4.5ms
+#define BMP_CMD_MEASURE_PRESSURE_0		0x34	// Max conversion time 4.5ms (OSS = 0)
+//#define BMP_CMD_MEASURE_PRESSURE_1		0x74	// Max conversion time 7.5ms (OSS = 1)
+//#define BMP_CMD_MEASURE_PRESSURE_2		0xB4	// Max conversion time 13.5ms (OSS = 2)
+//#define BMP_CMD_MEASURE_PRESSURE_3		0xF4	// Max conversion time 25.5ms (OSS = 3)
+#define MYALTITUDE  				153.0
+
+#define BMP180_DEBUG 1
+
+
 static int16_t ac1, ac2, ac3;
 static uint16_t ac4, ac5, ac6;
 static int16_t b1, b2;
@@ -178,22 +196,21 @@ int16_t ICACHE_FLASH_ATTR BMP180_readExRawValue(uint8_t cmd, enum PRESSURE_RESOL
 		return(0);
 	}
 	i2c_master_stop();
-	switch(resolution)
-	{
-		case OSS_0:
-			os_delay_us(CONVERSION_TIME*900);
-			break;
-		case OSS_1:
-			os_delay_us(CONVERSION_TIME*1500);
-			break;
-		case OSS_2:
-			os_delay_us(CONVERSION_TIME*2700);
-			break;
-		case OSS_3:
-			os_delay_us(CONVERSION_TIME*5100);
-			break;
-		default:
-			os_delay_us(CONVERSION_TIME*900);
+	switch(resolution){
+	case OSS_0:
+		os_delay_us(CONVERSION_TIME*900);
+		break;
+	case OSS_1:
+		os_delay_us(CONVERSION_TIME*1500);
+		break;
+	case OSS_2:
+		os_delay_us(CONVERSION_TIME*2700);
+		break;
+	case OSS_3:
+		os_delay_us(CONVERSION_TIME*5100);
+		break;
+	default:
+		os_delay_us(CONVERSION_TIME*900);
 	}
 	int16_t res = BMP180_readExRegister16(BMP180_DATA_REG, resolution);
 	return res;
