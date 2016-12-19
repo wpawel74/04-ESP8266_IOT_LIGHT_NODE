@@ -9,8 +9,8 @@ export COMPILE=gcc
 
 #SPI flash size, in K
 #ESP_SPI_FLASH_SIZE_K=1024
-ESP_SPI_FLASH_SIZE_K	= 2048
-#ESP_SPI_FLASH_SIZE_K	= 4096
+#ESP_SPI_FLASH_SIZE_K	= 2048
+ESP_SPI_FLASH_SIZE_K	= 4096
 #0: QIO, 1: QOUT, 2: DIO, 3: DOUT
 ESP_FLASH_MODE		= 0
 #0: 40MHz, 1: 26MHz, 2: 20MHz, 0xf: 80MHz
@@ -55,7 +55,7 @@ APPGEN		?= $(SDK_TOOLS)/gen_appbin.py
 TARGET		= httpd
 
 # which modules (subdirectories) of the project to include in compiling
-MODULES		= user driver user/modules mqtt user/cgi
+MODULES		= user driver user/modules mqtt user/cgi user/fx
 EXTRA_INCDIR	= include libesphttpd/include include/driver user/modules mqtt/include user/cgi
 
 # libraries used in this project, mainly provided by the SDK
@@ -65,7 +65,7 @@ LIBS		= c gcc hal phy pp net80211 wpa main lwip crypto
 LIBS		+= esphttpd
 
 # compiler flags using during compilation of source files
-CFLAGS		= -Os -ggdb -std=gnu99 -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-inline-functions\
+CFLAGS		= -Os -std=gnu99 -Wpointer-arith -Wundef -Wall -Wl,-EL -fno-inline-functions\
 		-nostdlib -mlongcalls -mtext-section-literals  -D__ets__ -DICACHE_FLASH \
 		-Wno-address -DPROTOCOL_NAMEv31
 
@@ -209,7 +209,7 @@ $(APP_AR): libesphttpd $(OBJ)
 	$(vecho) "AR $@"
 	$(Q) $(AR) cru $@ $(OBJ)
 
-checkdirs: $(BUILD_DIR)
+checkdirs: $(BUILD_DIR) 
 
 $(BUILD_DIR):
 	$(Q) mkdir -p $@
@@ -220,6 +220,6 @@ clean:
 	$(Q) rm -f $(TARGET_OUT)
 	$(Q) find $(BUILD_BASE) -type f | xargs rm -f
 	$(Q) rm -rf $(FW_BASE)
-	
+
 
 $(foreach bdir,$(BUILD_DIR),$(eval $(call compile-objects,$(bdir))))

@@ -4,6 +4,7 @@
 #include "io.h"
 #include "ws2812.h"
 #include "ws2812_i2s.h"
+#include "fx.h"
 
 static bool G_on = false;
 static ETSTimer G_light_timer;
@@ -14,14 +15,20 @@ typedef enum {
 } light_style;
 
 static void ICACHE_FLASH_ATTR light_set_style( light_style style ){
+	extern uint8_t *G_fx_leds;
 	int it = 0;
 
 	switch( style ){
 	case SIMPLE_OFF:
 #ifdef CONFIG_WS2812
 		for( it = 0; it < config()->light_chain_size ; it++ ){
-			uint8_t ws2812_sled[ 3 ] = { 0x00, 0x00, 0x00 };
-			ws2812_i2s_push( ws2812_sled, sizeof(ws2812_sled) );
+			struct RGB ws2812_sled = { .r = 0x00, .g = 0x00, .b = 0x00 };
+			if( G_fx_leds ){
+				G_fx_leds[ (it * sizeof(struct RGB)) ] = 0;
+				G_fx_leds[ (it * sizeof(struct RGB)) + 1 ] = 0;
+				G_fx_leds[ (it * sizeof(struct RGB)) + 2 ] = 0;
+			}
+			ws2812_i2s_push( G_fx_leds, config()->light_chain_size * sizeof(struct RGB) );
 		}
 #endif // CONFIG_WS2812
 
@@ -29,8 +36,12 @@ static void ICACHE_FLASH_ATTR light_set_style( light_style style ){
 	case SIMPLE_ON:
 #ifdef CONFIG_WS2812
 		for( it = 0; it < config()->light_chain_size ; it++ ){
-			uint8_t ws2812_sled[ 3 ] = { 0xff, 0xff, 0xff };
-			ws2812_i2s_push( ws2812_sled, sizeof(ws2812_sled) );
+			if( G_fx_leds ){
+				G_fx_leds[ (it * sizeof(struct RGB)) ] = 0xff;
+				G_fx_leds[ (it * sizeof(struct RGB)) + 1 ] = 0xff;
+				G_fx_leds[ (it * sizeof(struct RGB)) + 2 ] = 0xff;
+			}
+			ws2812_i2s_push( G_fx_leds, config()->light_chain_size * sizeof(struct RGB) );
 		}
 #endif // CONFIG_WS2812
 
@@ -82,10 +93,32 @@ bool light_is_enabled(void){
 }
 
 void light_ini(void) {
+	extern struct fx G_fx_flames_1;
+	extern struct fx G_fx_simple_1;
+	extern struct fx G_fx_simple_2;
+
 	os_timer_disarm(&G_light_timer);
 
 #ifdef CONFIG_WS2812
 	ws2812_init();
 #endif // CONFIG_WS2812
 
+	fx_ini();
+
+	G_fx_simple_1.fx.begin = sysCfg.fx_simple_1_start_no;
+	G_fx_simple_1.fx.end = sysCfg.fx_simple_1_stop_no;
+	//((struct RGB *)G_fx_simple_1.fx.prv). = sysCfg.fx_simple_1_RGB;
+
+	G_fx_simple_2.fx.begin = sysCfg.fx_simple_2_start_no;
+	G_fx_simple_2.fx.end = sysCfg.fx_simple_2_stop_no;
+
+	G_fx_flames_1.fx.begin = sysCfg.fx_flames_1_start_no;
+	G_fx_flames_1.fx.end = sysCfg.fx_flames_1_stop_no;
+
+	if( sysCfg.fx_simple_1_enable )
+		fx_register( &G_fx_simple_1 );
+	if( sysCfg.fx_simple_2_enable )
+		fx_register( &G_fx_simple_2 );
+	if( sysCfg.fx_flames_1_enable )
+		fx_register( &G_fx_flames_1 );
 }

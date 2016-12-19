@@ -188,7 +188,7 @@ static void ICACHE_FLASH_ATTR prHeapTimerCb(void *arg) {
 void user_init(void) {
 
 	//uart_init(BIT_RATE_115200,BIT_RATE_115200);
-	//stdoutInit();
+	stdoutInit();
 	os_delay_us(100000);
 	CFG_Load();
 	ioInit();

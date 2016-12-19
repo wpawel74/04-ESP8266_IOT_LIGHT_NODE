@@ -70,6 +70,8 @@
 #define LIGHT_COMFORT_UDP_PORT			7777
 #define LIGHT_COMFORT_CHAIN_SIZE		128
 
+#define LIGHT_COMFORT_POLL_TIME			100
+
 /* --------------------------------------------------------
  *               features configuration
  * --------------------------------------------------------*/
@@ -78,7 +80,7 @@
 #define CONFIG_BMP180
 #define CONFIG_DS1307
 #define CONFIG_RELAYS
-#define CONFIG_WS2812
+//#define CONFIG_WS2812
 #define CONFIG_MQTT
 
 #endif // _USER_CONFIG_H_

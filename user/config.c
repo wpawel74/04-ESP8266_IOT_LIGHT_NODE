@@ -259,6 +259,22 @@ void ICACHE_FLASH_ATTR CFG_Load()
 		sysCfg.light_udp_port = LIGHT_COMFORT_UDP_PORT;
 		sysCfg.light_chain_size = LIGHT_COMFORT_CHAIN_SIZE;
 
+		sysCfg.fx_poll_time = LIGHT_COMFORT_POLL_TIME;
+
+		sysCfg.fx_simple_1_enable = 0;
+		sysCfg.fx_simple_1_start_no = 0;
+		sysCfg.fx_simple_1_stop_no = 1;
+//		sysCfg.fx_simple_1_RGB;
+
+		sysCfg.fx_simple_2_enable = 0;
+		sysCfg.fx_simple_2_start_no = 2;
+		sysCfg.fx_simple_2_stop_no = 3;
+//		sysCfg.fx_simple_2_RGB;
+
+		sysCfg.fx_flames_1_enable = 0;
+		sysCfg.fx_flames_1_start_no = 0;
+		sysCfg.fx_flames_1_stop_no = 0;
+
 		os_printf(" default configurations\r\n");
 
 		CFG_Save();

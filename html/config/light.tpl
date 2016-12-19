@@ -20,6 +20,21 @@
 				<tr><td>Delay Power OFF SEQ:</td><td><input type="text" name="delay_power_off" id="delay_power_off" value="%delay_power_off%"/> ms</td></tr>
 			</table>
 			<br/>
+			<table>
+				<tr><td>Simple style enabled (1th) ?:</td><td><input type="checkbox" name="light_simple_1_enable" id="light_simple_1_enable" %light_simple_1_enable% /></td></tr>
+				<tr><td>Start led no:</td><td><input type="text" name="simple_1_start_no"  id="simple_1_start_no"  value="%simple_1_start_no%"/></td></tr>
+				<tr><td>Stop  led no:</td><td><input type="text" name="simple_1_stop_no"   id="simple_1_stop_no"   value="%simple_1_stop_no%"/></td></tr>
+			</table>
+			<table>
+				<tr><td>Simple style enabled (2th) ?:</td><td><input type="checkbox" name="light_simple_2_enable" id="light_simple_2_enable" %light_simple_2_enable% /></td></tr>
+				<tr><td>Start led no:</td><td><input type="text" name="simple_2_start_no"  id="simple_2_start_no"  value="%simple_2_start_no%"/></td></tr>
+				<tr><td>Stop  led no:</td><td><input type="text" name="simple_2_stop_no"   id="simple_2_stop_no"   value="%simple_2_stop_no%"/></td></tr>
+			</table>
+			<table>
+				<tr><td>Flame style enabled (1th) ?:</td><td><input type="checkbox" name="light_flame_1_enable" id="light_flame_1_enable" %light_flame_1_enable% /></td></tr>
+				<tr><td>Start led no:</td><td><input type="text" name="flame_1_start_no"  id="flame_1_start_no"  value="%flame_1_start_no%"/></td></tr>
+				<tr><td>Stop  led no:</td><td><input type="text" name="flame_1_stop_no"   id="flame_1_stop_no"   value="%flame_1_stop_no%"/></td></tr>
+			</table>
 			<button type="button" onClick="parent.location='/'">Back</button>
 			<input type="submit" name="save" value="Save">
 			</p>

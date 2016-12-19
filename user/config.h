@@ -149,6 +149,22 @@ typedef struct{
 	uint32_t light_udp_port;
 	uint32_t light_chain_size;
 
+	uint32_t fx_poll_time;
+
+	uint32_t fx_simple_1_enable;
+	uint32_t fx_simple_1_start_no;
+	uint32_t fx_simple_1_stop_no;
+	uint32_t fx_simple_1_RGB;
+
+	uint32_t fx_simple_2_enable;
+	uint32_t fx_simple_2_start_no;
+	uint32_t fx_simple_2_stop_no;
+	uint32_t fx_simple_2_RGB;
+
+	uint32_t fx_flames_1_enable;
+	uint32_t fx_flames_1_start_no;
+	uint32_t fx_flames_1_stop_no;
+
 } SYSCFG;
 
 typedef struct {
