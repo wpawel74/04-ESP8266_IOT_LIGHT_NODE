@@ -21,13 +21,20 @@ void ICACHE_FLASH_ATTR tplNTP(HttpdConnData *connData, char *token, void **arg) 
 
 	os_strcpy(buff, "Unknown");
 
-	if (os_strcmp(token, "ntp-enable")==0) {
-		os_sprintf(buff, "%d", (int)sysCfg.ntp_enable);
-	}
+	if (os_strcmp(token, "ntp-enable") == 0)
+		os_sprintf(buff, "%d", (int)config()->ntp_enable);
 
-	if (os_strcmp(token, "ntp-tz")==0) {
-		os_sprintf(buff, "%d", (int)sysCfg.ntp_tz);
-	}
+	if (os_strcmp(token, "ntp-tz") == 0)
+		os_sprintf(buff, "%d", (int)config()->ntp_tz);
+
+	if (os_strcmp(token, "ntp-server-1") == 0)
+		os_sprintf(buff, "%s", config()->ntp_servers[0]);
+
+	if (os_strcmp(token, "ntp-server-2") == 0)
+		os_sprintf(buff, "%s", config()->ntp_servers[1]);
+
+	if (os_strcmp(token, "ntp-server-3") == 0)
+		os_sprintf(buff, "%s", config()->ntp_servers[2]);
 
 	if (os_strcmp(token, "NTP")==0) {
 //		os_sprintf(buff,"Time: %s GMT%s%02d\n",epoch_to_str(sntp_time+(sntp_tz*3600)),sntp_tz > 0 ? "+" : "",sntp_tz);
@@ -46,12 +53,27 @@ int ICACHE_FLASH_ATTR cgiNTP(HttpdConnData *connData) {
 	}
 
 	len=httpdFindArg(connData->post->buff, "ntp-enable", buff, sizeof(buff));
-	sysCfg.ntp_enable = len > 0 ? 1:0;
-	
+	config()->ntp_enable = len > 0 ? 1:0;
+
+	memset( config()->ntp_servers[0], 0, 32 );
+	memset( config()->ntp_servers[1], 0, 32 );
+	memset( config()->ntp_servers[2], 0, 32 );
+
+	len=httpdFindArg(connData->post->buff, "ntp-server-1", config()->ntp_servers[0], 32);
+	len=httpdFindArg(connData->post->buff, "ntp-server-2", config()->ntp_servers[1], 32);
+	len=httpdFindArg(connData->post->buff, "ntp-server-3", config()->ntp_servers[2], 32);
+
 	len=httpdFindArg(connData->post->buff, "ntp-tz", buff, sizeof(buff));
 	if (len>0) {
-		sysCfg.ntp_tz=atoi(buff);
-//		sntp_tz=sysCfg.ntp_tz;
+		config()->ntp_tz = atoi(buff);
+		sntp_stop();
+		if( config()->ntp_enable ){
+			sntp_set_timezone(config()->ntp_tz);
+			sntp_setservername( 0, config()->ntp_servers[0] );
+			sntp_setservername( 1, config()->ntp_servers[1] );
+			sntp_setservername( 2, config()->ntp_servers[2] );
+			sntp_init();
+		}
 	}
 
 	CFG_Save();
