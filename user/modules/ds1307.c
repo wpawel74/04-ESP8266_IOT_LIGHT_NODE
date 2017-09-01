@@ -54,7 +54,6 @@ static bool ICACHE_FLASH_ATTR ds1307_send(uint8 *data, uint8 len) {
 	// write address & direction
 	i2c_master_writeByte((uint8)(DS1307_ADDR << 1));
 	if (!i2c_master_checkAck()) {
-		//uart0_send("i2c error1\r\n");
 		i2c_master_stop();
 		return false;
 	}
@@ -63,7 +62,6 @@ static bool ICACHE_FLASH_ATTR ds1307_send(uint8 *data, uint8 len) {
 	for (loop = 0; loop < len; loop++) {
 		i2c_master_writeByte(data[loop]);
 		if (!i2c_master_checkAck()) {
-			//uart0_send("i2c error2\r\n");
 			i2c_master_stop();
 			return false;
 		}
@@ -86,7 +84,6 @@ static bool ICACHE_FLASH_ATTR ds1307_recv(uint8 *data, uint8 len) {
 	// write address & direction
 	i2c_master_writeByte((uint8)((DS1307_ADDR << 1) | 1));
 	if (!i2c_master_checkAck()) {
-		//uart0_send("i2c error3\r\n");
 		i2c_master_stop();
 		return false;
 	}
@@ -95,7 +92,8 @@ static bool ICACHE_FLASH_ATTR ds1307_recv(uint8 *data, uint8 len) {
 	for (loop = 0; loop < len; loop++) {
 		data[loop] = i2c_master_readByte();
 		// send ack (except after last byte, then we send nack)
-		if (loop < (len - 1)) i2c_master_send_ack(); else i2c_master_send_nack();
+		if (loop < (len - 1)) i2c_master_send_ack();
+		else i2c_master_send_nack();
 	}
 
 	// signal i2c stop
