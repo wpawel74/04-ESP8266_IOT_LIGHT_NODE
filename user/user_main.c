@@ -16,6 +16,7 @@ some pictures of cats.
 #include <esp8266.h>
 #include <i2c_master.h>
 #include <uart.h>
+#include <sntp.h>
 
 #include "user_config.h"
 #include "httpd.h"
@@ -206,7 +207,11 @@ void user_init(void) {
 	httpdInit(builtInUrls, 80); //sysCfg.httpd_port);
 
 	if(sysCfg.ntp_enable) {
-//		sntp_init(sysCfg.ntp_tz);	//timezone
+		sntp_set_timezone(config()->ntp_tz);	//timezone
+		sntp_setservername( 0, config()->ntp_servers[0] );
+		sntp_setservername( 1, config()->ntp_servers[1] );
+		sntp_setservername( 2, config()->ntp_servers[2] );
+		sntp_init();
 	}
 
 #ifdef CONFIG_DTH22
@@ -220,8 +225,9 @@ void user_init(void) {
 #ifdef CONFIG_BMP180
 	if(sysCfg.sensor_bmp180_enable){
 		if( BMP180_Init() ){
-			int32_t temp = BMP180_GetTemperature();
-			os_printf( "BMP180: temperature %d.%d C, air pressure %d Pa\n", temp/10, temp - ((temp/10)*10), BMP180_GetPressure(OSS_0));
+			int32_t temp, pressure;
+			if( BMP180_GetTemperature( &temp ) == 0 && BMP180_GetPressure(OSS_0, &pressure ) == 0 )
+				os_printf( "BMP180: temperature %ld.%ld C, air pressure %ld Pa\n", temp/10, temp - ((temp/10)*10), pressure );
 		}
 	}
 #endif // CONFIG_BMP180
@@ -229,7 +235,7 @@ void user_init(void) {
 	{
 	struct tm tm;
 	if( ds1307_getTime(&tm) ){
-		os_printf( "RTC: date %d/%d/%d %d:%d:%d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec );
+		os_printf( "RTC: date %d/%d/%d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec );
 	}
 	}
 #endif // CONFIG_DS1307
