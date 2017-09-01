@@ -32,27 +32,7 @@
 #define USER_CONFIG_H_
 #include "os_type.h"
 #include "user_config.h"
-
-#define THERMOSTAT_MANUAL 0
-#define THERMOSTAT_AUTO 1
-
-#define THERMOSTAT_HEATING 0
-#define THERMOSTAT_COOLING 1
-
-typedef struct {
-	uint16_t start;
-	uint16_t end;
-	uint16_t setpoint;  // Degrees C in * 100 i.e. 2350=23.5*C
-	uint16_t active; 	 // pad to 4 byte boundary
-} dayScheduleElement;
- 
-typedef struct {
-	dayScheduleElement daySched[8]; // Max 8 schedules per day
-}  daySchedule;
- 
-typedef struct {
-	daySchedule weekSched[7]; // 7 days per week
-}  weekSchedule;
+#include "fx.h"
 
 typedef enum POWER_SOURCE {
 	DONT_CARE	= 0,
@@ -91,6 +71,7 @@ typedef struct{
 
 	uint32_t ntp_enable;
 	int32_t ntp_tz;
+	char ntp_servers[3][32];
 
 	uint32_t mqtt_enable;
 	uint8_t mqtt_host[64];
@@ -108,39 +89,12 @@ typedef struct{
 	uint32_t sensor_ds18b20_enable;
 	uint32_t sensor_dht22_enable;
 	uint32_t sensor_bmp180_enable;
-	uint32_t thermostat1_input;
 
 	uint32_t relay_latching_enable;
 	uint32_t relay_1_state;
 	uint32_t relay_2_state;
-	uint32_t relay_3_state;
 	uint8_t relay1name[24];
 	uint8_t relay2name[24];
-	uint8_t relay3name[24];
-
-	uint32_t thermostat1state;
-	uint32_t thermostat1manualsetpoint;
-	uint32_t thermostat1mode;
-	uint32_t thermostat1opmode;
-	uint32_t thermostat1hysteresishigh;
-	uint32_t thermostat1hysteresislow;
-	weekSchedule thermostat1schedule;
-
-	uint32_t thermostat2state;
-	uint32_t thermostat2manualsetpoint;
-	uint32_t thermostat2mode;
-	uint32_t thermostat2opmode;
-	uint32_t thermostat2hysteresishigh;
-	uint32_t thermostat2hysteresislow;
-	weekSchedule thermostat2schedule;
-
-	uint32_t thermostat3state;
-	uint32_t thermostat3manualsetpoint;
-	uint32_t thermostat3mode;
-	uint32_t thermostat3opmode;
-	uint32_t thermostat3hysteresishigh;
-	uint32_t thermostat3hysteresislow;
-	weekSchedule thermostat3schedule;
 
 	uint32_t light_driver_enable;
 	POWER_SOURCE light_power_supply;
@@ -154,12 +108,12 @@ typedef struct{
 	uint32_t fx_simple_1_enable;
 	uint32_t fx_simple_1_start_no;
 	uint32_t fx_simple_1_stop_no;
-	uint32_t fx_simple_1_RGB;
+	struct RGB fx_simple_1_RGB;
 
 	uint32_t fx_simple_2_enable;
 	uint32_t fx_simple_2_start_no;
 	uint32_t fx_simple_2_stop_no;
-	uint32_t fx_simple_2_RGB;
+	struct RGB fx_simple_2_RGB;
 
 	uint32_t fx_flames_1_enable;
 	uint32_t fx_flames_1_start_no;
