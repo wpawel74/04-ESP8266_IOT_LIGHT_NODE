@@ -2,12 +2,9 @@
 #define FX_H_
 #include <esp8266.h>
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
-
-#define FX_STANDALONE
-#define FX_USE_TASK
 
 typedef struct RGB {
 	uint8_t		r, g, b;

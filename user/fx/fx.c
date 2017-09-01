@@ -79,17 +79,19 @@ static void ICACHE_FLASH_ATTR fx_timer_callback(void *arg){
 	fx_poll();
 
 	for( it = 0; it < config()->light_chain_size; it++ )
-		os_printf( "%x.%x.%x ", G_fx_leds[ it * sizeof(struct RGB) ], G_fx_leds[ it * sizeof(struct RGB) ] + 1, G_fx_leds[ it * sizeof(struct RGB) ] + 2 );
+		os_printf( "%x.%x.%x ", G_fx_leds[ it * sizeof(struct RGB) ], G_fx_leds[ it * sizeof(struct RGB) + 1 ] , G_fx_leds[ it * sizeof(struct RGB) + 2 ] );
 	os_printf("\n");
 
 #ifdef CONFIG_WS2812
 	ws2812_i2s_push( G_fx_leds, config()->light_chain_size * sizeof(struct RGB) );
 #endif // CONFIG_WS2812
+
 }
 
 void ICACHE_FLASH_ATTR fx_ini(void){
 	if( G_fx_leds == NULL )
 		G_fx_leds = os_malloc( config()->light_chain_size * sizeof(struct RGB) );
+	memset( G_fx_leds, 0x00, config()->light_chain_size * sizeof(struct RGB) );
 	os_timer_disarm(&G_fx_timer);
 	os_timer_setfn(&G_fx_timer, fx_timer_callback, NULL);
 	os_timer_arm(&G_fx_timer, 1000, 1 ); //config()->fx_poll_time, 1);
@@ -109,7 +111,7 @@ void ICACHE_FLASH_ATTR fx_register( struct fx *fx ){
 	}
 	fx->fx.start( fx->fx.prv );
 	fx_add( fx );
-	os_printf( "D: F/X: %s effect added", fx->name ? fx->name: "(null)" );
+	os_printf( "D: F/X: %s effect added\n", fx->name ? fx->name: "(null)" );
 }
 
 void ICACHE_FLASH_ATTR fx_deregister( struct fx *fx ){
@@ -118,5 +120,5 @@ void ICACHE_FLASH_ATTR fx_deregister( struct fx *fx ){
 		fx->next = NULL;
 		fx->fx.stop( fx->fx.prv );
 	}
-	os_printf( "D: F/X: %s effect removed", fx->name ? fx->name: "(null)" );
+	os_printf( "D: F/X: %s effect removed\n", fx->name ? fx->name: "(null)" );
 }
