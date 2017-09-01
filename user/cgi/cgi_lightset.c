@@ -30,12 +30,21 @@ int ICACHE_FLASH_ATTR cgiLightSettings(HttpdConnData *connData) {
 	if( httpdFindArg(connData->post->buff, "chain_size", buff, sizeof(buff)) > 0 )
 		sysCfg.light_chain_size = atoi(buff);
 
+	if( httpdFindArg(connData->post->buff, "light_udp_port", buff, sizeof(buff)) > 0 )
+		sysCfg.light_udp_port = atoi(buff);
 
 	sysCfg.fx_simple_1_enable = (httpdFindArg(connData->post->buff, "light_simple_1_enable", buff, sizeof(buff)) > 0) ? 1:0;
 	if( httpdFindArg(connData->post->buff, "simple_1_start_no", buff, sizeof(buff)) > 0 )
 		sysCfg.fx_simple_1_start_no = atoi(buff);
 	if( httpdFindArg(connData->post->buff, "simple_1_stop_no", buff, sizeof(buff)) > 0 )
 		sysCfg.fx_simple_1_stop_no = atoi(buff);
+	if( httpdFindArg(connData->post->buff, "simple_1_r", buff, sizeof(buff)) > 0 )
+		sysCfg.fx_simple_1_RGB.r = atoi(buff);
+	if( httpdFindArg(connData->post->buff, "simple_1_g", buff, sizeof(buff)) > 0 )
+		sysCfg.fx_simple_1_RGB.g = atoi(buff);
+	if( httpdFindArg(connData->post->buff, "simple_1_b", buff, sizeof(buff)) > 0 )
+		sysCfg.fx_simple_1_RGB.b = atoi(buff);
+
 	if( sysCfg.fx_simple_1_enable )
 		fx_register( &G_fx_simple_1 );
 	else
@@ -46,6 +55,13 @@ int ICACHE_FLASH_ATTR cgiLightSettings(HttpdConnData *connData) {
 		sysCfg.fx_simple_2_start_no = atoi(buff);
 	if( httpdFindArg(connData->post->buff, "simple_2_stop_no", buff, sizeof(buff)) > 0 )
 		sysCfg.fx_simple_2_stop_no = atoi(buff);
+	if( httpdFindArg(connData->post->buff, "simple_2_r", buff, sizeof(buff)) > 0 )
+		sysCfg.fx_simple_2_RGB.r = atoi(buff);
+	if( httpdFindArg(connData->post->buff, "simple_2_g", buff, sizeof(buff)) > 0 )
+		sysCfg.fx_simple_2_RGB.g = atoi(buff);
+	if( httpdFindArg(connData->post->buff, "simple_2_b", buff, sizeof(buff)) > 0 )
+		sysCfg.fx_simple_2_RGB.b = atoi(buff);
+
 	if( sysCfg.fx_simple_2_enable )
 		fx_register( &G_fx_simple_2 );
 	else
@@ -100,7 +116,8 @@ void ICACHE_FLASH_ATTR tplLightSettings(HttpdConnData *connData, char *token, vo
 	if( os_strcmp(token, "chain_size") == 0 )
 		os_sprintf(buff,"%d", (int)sysCfg.light_chain_size);
 
-
+	if( os_strcmp(token, "light_udp_port") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.light_udp_port);
 
 	if( os_strcmp(token, "light_simple_1_enable") == 0 )
 		os_strcpy(buff, sysCfg.fx_simple_1_enable == 1 ? "checked" : "" );
@@ -108,6 +125,25 @@ void ICACHE_FLASH_ATTR tplLightSettings(HttpdConnData *connData, char *token, vo
 		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_start_no);
 	if( os_strcmp(token, "simple_1_stop_no") == 0 )
 		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_stop_no);
+	if( os_strcmp(token, "simple_1_rgb_r") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_RGB.r);
+	if( os_strcmp(token, "simple_1_rgb_g") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_RGB.g);
+	if( os_strcmp(token, "simple_1_rgb_b") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_RGB.b);
+
+	if( os_strcmp(token, "light_simple_2_enable") == 0 )
+		os_strcpy(buff, sysCfg.fx_simple_2_enable == 1 ? "checked" : "" );
+	if( os_strcmp(token, "simple_2_start_no") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_start_no);
+	if( os_strcmp(token, "simple_2_stop_no") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_stop_no);
+	if( os_strcmp(token, "simple_2_rgb_r") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_RGB.r);
+	if( os_strcmp(token, "simple_2_rgb_g") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_RGB.g);
+	if( os_strcmp(token, "simple_2_rgb_b") == 0 )
+		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_RGB.b);
 
 	if( os_strcmp(token, "light_flame_1_enable") == 0 )
 		os_strcpy(buff, sysCfg.fx_flames_1_enable == 1 ? "checked" : "" );
@@ -115,8 +151,6 @@ void ICACHE_FLASH_ATTR tplLightSettings(HttpdConnData *connData, char *token, vo
 		os_sprintf(buff,"%d", (int)sysCfg.fx_flames_1_start_no);
 	if( os_strcmp(token, "flame_1_stop_no") == 0 )
 		os_sprintf(buff,"%d", (int)sysCfg.fx_flames_1_stop_no);
-
-
 
 	httpdSend(connData, buff, -1);
 }

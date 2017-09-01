@@ -22,7 +22,6 @@ static void ICACHE_FLASH_ATTR light_set_style( light_style style ){
 	case SIMPLE_OFF:
 #ifdef CONFIG_WS2812
 		for( it = 0; it < config()->light_chain_size ; it++ ){
-			struct RGB ws2812_sled = { .r = 0x00, .g = 0x00, .b = 0x00 };
 			if( G_fx_leds ){
 				G_fx_leds[ (it * sizeof(struct RGB)) ] = 0;
 				G_fx_leds[ (it * sizeof(struct RGB)) + 1 ] = 0;
@@ -69,18 +68,14 @@ void ICACHE_FLASH_ATTR light_enable_power_supply( bool on ) {
 
 static void ICACHE_FLASH_ATTR light_delay_timer_callback(void *arg) {
 	bool	*on = (bool *)arg;
-	if( !on )
-		light_enable_power_supply( on );
-	else 
-		light_set_style( *on ? SIMPLE_ON: SIMPLE_OFF );
+	if( !(*on) ) light_enable_power_supply( *on );
+	else light_set_style( SIMPLE_ON );
 }
 
 void ICACHE_FLASH_ATTR light_enable( bool on ) {
 
-	if( on )
-		light_enable_power_supply( on );
-	else
-		light_set_style( on ? SIMPLE_ON: SIMPLE_OFF );
+	if( on ) light_enable_power_supply( on );
+	else light_set_style( SIMPLE_OFF );
 
 	G_on = on;
 	os_timer_disarm(&G_light_timer);
@@ -96,6 +91,7 @@ void light_ini(void) {
 	extern struct fx G_fx_flames_1;
 	extern struct fx G_fx_simple_1;
 	extern struct fx G_fx_simple_2;
+	extern void ICACHE_FLASH_ATTR simple_set_RGB( void *prv, const struct RGB *rgb );
 
 	os_timer_disarm(&G_light_timer);
 
@@ -105,20 +101,24 @@ void light_ini(void) {
 
 	fx_ini();
 
+#if 1
 	G_fx_simple_1.fx.begin = sysCfg.fx_simple_1_start_no;
 	G_fx_simple_1.fx.end = sysCfg.fx_simple_1_stop_no;
-	//((struct RGB *)G_fx_simple_1.fx.prv). = sysCfg.fx_simple_1_RGB;
+	simple_set_RGB( G_fx_simple_1.fx.prv, &config()->fx_simple_1_RGB );
 
 	G_fx_simple_2.fx.begin = sysCfg.fx_simple_2_start_no;
 	G_fx_simple_2.fx.end = sysCfg.fx_simple_2_stop_no;
+	simple_set_RGB( G_fx_simple_2.fx.prv, &config()->fx_simple_2_RGB );
 
 	G_fx_flames_1.fx.begin = sysCfg.fx_flames_1_start_no;
 	G_fx_flames_1.fx.end = sysCfg.fx_flames_1_stop_no;
 
 	if( sysCfg.fx_simple_1_enable )
 		fx_register( &G_fx_simple_1 );
-	if( sysCfg.fx_simple_2_enable )
-		fx_register( &G_fx_simple_2 );
-	if( sysCfg.fx_flames_1_enable )
-		fx_register( &G_fx_flames_1 );
+//	if( sysCfg.fx_simple_2_enable )
+//		fx_register( &G_fx_simple_2 );
+//	if( sysCfg.fx_flames_1_enable )
+//		fx_register( &G_fx_flames_1 );
+#endif
+
 }
