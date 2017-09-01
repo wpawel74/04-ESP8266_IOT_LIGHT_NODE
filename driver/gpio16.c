@@ -38,6 +38,7 @@
 #include "ets_sys.h"
 #include "osapi.h"
 #include "driver/gpio16.h"
+#include "espmissingincludes.h"
 
 uint8_t pin_num[GPIO_PIN_NUM];
 uint8_t pin_func[GPIO_PIN_NUM];
@@ -172,6 +173,7 @@ int ICACHE_FLASH_ATTR gpio_write(unsigned pin, unsigned level)
 		return 1;
 	}
 	GPIO_OUTPUT_SET(GPIO_ID_PIN(pin_num[pin]), level);
+	return 0;
 }
 
 int ICACHE_FLASH_ATTR gpio_read(unsigned pin)

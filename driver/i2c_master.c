@@ -11,6 +11,7 @@
 #include "ets_sys.h"
 #include "osapi.h"
 #include "gpio.h"
+#include "espmissingincludes.h"
 
 #include "driver/i2c_master.h"
 

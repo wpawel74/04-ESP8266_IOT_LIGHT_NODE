@@ -11,6 +11,8 @@
 *******************************************************************************/
 #include "ets_sys.h"
 #include "osapi.h"
+#include "espmissingincludes.h"
+
 #include "driver/uart.h"
 
 #define UART0   0
@@ -143,24 +145,6 @@ uart0_rx_intr_handler(void *para)
             // overflow ...we may need more error handle here.
             pRxBuff->pWritePos = pRxBuff->pRcvMsgBuff ;
         }
-    }
-}
-
-
-/******************************************************************************
- * FunctionName : uart0_tx_buffer
- * Description  : use uart0 to transfer buffer
- * Parameters   : uint8 *buf - point to send buffer
- *                uint16 len - buffer len
- * Returns      :
-*******************************************************************************/
-void ICACHE_FLASH_ATTR
-uart0_tx_buffer(uint8 *buf, uint16 len)
-{
-    uint16 i;
-
-    for (i = 0; i < len; i++) {
-        uart_tx_one_char(buf[i]);
     }
 }
 
