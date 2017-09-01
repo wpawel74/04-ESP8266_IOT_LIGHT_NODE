@@ -35,8 +35,8 @@ enum PRESSURE_RESOLUTION {
 };
 
 bool BMP180_Init(void);
-int32_t BMP180_GetTemperature();
-int32_t BMP180_GetPressure(enum PRESSURE_RESOLUTION resolution);
+int32_t BMP180_GetTemperature( int32_t *T );
+int32_t BMP180_GetPressure(enum PRESSURE_RESOLUTION resolution, int32_t *P );
 int32_t BMP180_CalcAltitude(int32_t pressure);
 
 #endif // BMP180_H
