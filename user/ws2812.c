@@ -36,7 +36,7 @@ void ICACHE_FLASH_ATTR ws2812_init(void){
 	espconn_regist_recvcb(pUdpServer, udpserver_recv);
 
 	if( espconn_create( pUdpServer ) ) {
-		os_printf( "WS2812:UDP(%d) server was not started!\n", config()->light_udp_port );
+		os_printf( "WS2812:UDP(%ld) server was not started!\n", config()->light_udp_port );
 	} else 
 		ws2812_i2s_init();
 }
