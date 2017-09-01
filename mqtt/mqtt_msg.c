@@ -32,6 +32,7 @@
 #include <string.h>
 #include "mqtt_msg.h"
 #include "user_config.h"
+#include "utils.h"
 #define MQTT_MAX_FIXED_HEADER_SIZE 3
 
 enum mqtt_connect_flag
@@ -127,7 +128,7 @@ static mqtt_message_t* ICACHE_FLASH_ATTR fini_message(mqtt_connection_t* connect
 
 void ICACHE_FLASH_ATTR mqtt_msg_init(mqtt_connection_t* connection, uint8_t* buffer, uint16_t buffer_length)
 {
-  memset(connection, 0, sizeof(connection));
+  memset(connection, 0, sizeof(mqtt_connection_t));
   connection->buffer = buffer;
   connection->buffer_length = buffer_length;
 }
