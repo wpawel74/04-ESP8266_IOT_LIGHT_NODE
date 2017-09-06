@@ -27,7 +27,7 @@ static void ICACHE_FLASH_ATTR simple_stop( void *prv ){
 }
 
 struct fx_simple G_simple_1 = {
-	.rgb = { 0, 0, 0 }
+	.rgb = { 0xd0, 0xf0, 0x24 }
 };
 
 struct fx G_fx_simple_1 = {

@@ -119,6 +119,6 @@ void ICACHE_FLASH_ATTR fx_deregister( struct fx *fx ){
 		fx_del( fx );
 		fx->next = NULL;
 		fx->fx.stop( fx->fx.prv );
+		os_printf( "D: F/X: %s effect removed\n", fx->name ? fx->name: "(null)" );
 	}
-	os_printf( "D: F/X: %s effect removed\n", fx->name ? fx->name: "(null)" );
 }
