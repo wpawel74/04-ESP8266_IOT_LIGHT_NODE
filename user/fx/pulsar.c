@@ -17,7 +17,7 @@ static void ICACHE_FLASH_ATTR pulsar_stop( void *prv ){
 
 void ICACHE_FLASH_ATTR pulsar_set_RGB( void *prv, const struct RGB *rgb ){
 	struct fx_pulsar *st = (struct fx_pulsar *)prv;
-	st->rgb = *rgb;
+	st->rgb_b = *rgb;
 }
 
 static void ICACHE_FLASH_ATTR pulsar_timer_callback(void *arg){
@@ -29,9 +29,9 @@ static void ICACHE_FLASH_ATTR pulsar_timer_callback(void *arg){
 	if( st->rgb.b != st->rgb_b.b )
 		st->rgb.b < st->rgb_b.b ? st->rgb.b++: st->rgb.b--;
 
-	if(st->rgb_b.r == st->rgb_fuzzy.r && st->rgb_b.g == st->rgb_fuzzy.g && st->rgb_b.b == st->rgb_fuzzy.b)
+	if(st->rgb.r == st->rgb_fuzzy.r && st->rgb.g == st->rgb_fuzzy.g && st->rgb.b == st->rgb_fuzzy.b)
 		pulsar_set_RGB( st, &st->rgb_dizzy );
-	if(st->rgb_b.r == st->rgb_dizzy.r && st->rgb_b.g == st->rgb_dizzy.g && st->rgb_b.b == st->rgb_dizzy.b)
+	if(st->rgb.r == st->rgb_dizzy.r && st->rgb.g == st->rgb_dizzy.g && st->rgb.b == st->rgb_dizzy.b)
 		pulsar_set_RGB( st, &st->rgb_fuzzy );
 }
 
@@ -60,7 +60,7 @@ static void ICACHE_FLASH_ATTR pulsar_algo( void *prv, char *dt, int size ) {
 
 	// Step 1.  Map cells to LED colors
 	for( it = 0; it < size; it++) {
-		((struct RGB *)dt)[ it ] = st->rgb_b;
+		((struct RGB *)dt)[ it ] = st->rgb;
 	}
 }
 
