@@ -40,6 +40,7 @@ some pictures of cats.
 #include "bmp180.h"
 #include "light.h"
 #include "ds1307.h"
+#include "alarm.h"
 
 //The example can print out the heap use every 3 seconds. You can use this to catch memory leaks.
 //#define SHOW_HEAP_USE
@@ -145,6 +146,8 @@ HttpdBuiltInUrl builtInUrls[]={
 	{"/config/rtc.cgi", cgiRTC, NULL},
 	{"/config/light.tpl", cgiEspFsTemplate, tplLightSettings},
 	{"/config/light.cgi", cgiLightSettings, NULL},
+	{"/config/alarm.tpl", cgiEspFsTemplate, tplAlarmSettings},
+	{"/config/alarm.cgi", cgiAlarmSettings, NULL},
 
 	{"/control/ui.tpl", cgiEspFsTemplate, tplUI},
 
@@ -171,7 +174,6 @@ HttpdBuiltInUrl builtInUrls[]={
 	{"/control/state.cgi", cgiState, NULL}, 
 	{"/control/reset.cgi", cgiReset, NULL}, 
 
-
 	{"*", cgiEspFsHook, NULL}, //Catch-all cgi function for the filesystem
 	{NULL, NULL, NULL}
 };
@@ -192,8 +194,7 @@ void user_init(void) {
 	stdoutInit();
 	os_delay_us(100000);
 	CFG_Load();
-	ioInit();
-//	captdnsInit();
+	io_GPIOIni();
 	i2c_master_gpio_init();
 
 	// 0x40200000 is the base address for spi flash memory mapping, ESPFS_POS is the position
@@ -235,12 +236,23 @@ void user_init(void) {
 	{
 	struct tm tm;
 	if( ds1307_getTime(&tm) ){
-		os_printf( "RTC: date %d/%d/%d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec );
+		time_t time;
+		extern time_t ICACHE_FLASH_ATTR mktime(struct tm *timep);
+		extern int ICACHE_FLASH_ATTR stime(time_t *t);
+
+		time = mktime( &tm );
+		//
+		// set system time based on date and time from RTC
+		//
+		stime( &time );
+		os_printf( "RTC: date %d/%02d/%02d %02d:%02d:%02d\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec );
 	}
 	}
 #endif // CONFIG_DS1307
 
+#ifdef CONFIG_WS2812
 	light_ini();
+#endif // CONFIG_WS2812
 
 #ifdef CONFIG_MQTT
 	if(sysCfg.mqtt_enable) {
@@ -253,6 +265,8 @@ void user_init(void) {
 	}
 	broadcastd_init();
 #endif // CONFIG_MQTT
+
+	alarm_ini();
 
 #ifdef SHOW_HEAP_USE
 	os_timer_disarm(&prHeapTimer);

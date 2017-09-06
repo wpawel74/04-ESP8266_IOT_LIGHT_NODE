@@ -9,7 +9,7 @@
 #include <esp8266.h>
 #include "cgi.h"
 
-int ICACHE_FLASH_ATTR tplAbout(HttpdConnData *connData, char *token, void **arg) {
+int ICACHE_FLASH_ATTR tplAbout(HttpdConnData *cd, char *token, void **arg) {
 	char buff[128];
 	if (token==NULL) return HTTPD_CGI_DONE;
 
@@ -17,10 +17,8 @@ int ICACHE_FLASH_ATTR tplAbout(HttpdConnData *connData, char *token, void **arg)
 		os_sprintf(buff,"Free heap size:%d\n",system_get_free_heap_size());
 	}
 
-	if (os_strcmp(token, "fwver")==0) {
-		os_sprintf(buff,"%s",FWVER);
-	}
+	tplText( buff, token, "fwver", FWVER);
 
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 	return HTTPD_CGI_DONE;
 }

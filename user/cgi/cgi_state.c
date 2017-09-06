@@ -16,17 +16,17 @@
 #include "ds18b20.h"
 
 
-int ICACHE_FLASH_ATTR cgiState(HttpdConnData *connData) {
+int ICACHE_FLASH_ATTR cgiState(HttpdConnData *cd) {
 	char buff[512];
 	char tmp[32];
 
 	char temp[32];
 	char humi[32];
 
-	httpdStartResponse(connData, 200);
-	httpdHeader(connData, "Content-Type", "text/json");
-	httpdHeader(connData, "Access-Control-Allow-Origin", "*");
-	httpdEndHeaders(connData);
+	httpdStartResponse(cd, 200);
+	httpdHeader(cd, "Content-Type", "text/json");
+	httpdHeader(cd, "Access-Control-Allow-Origin", "*");
+	httpdEndHeaders(cd);
 
 	ds_str(tmp,0);
 
@@ -34,8 +34,8 @@ int ICACHE_FLASH_ATTR cgiState(HttpdConnData *connData) {
 	dht_humi_str(humi);
 
 	os_sprintf( buff, "{ \n\"relay1\": \"%d\"\n,\n\"relay2\": \"%d\"\n , \n\"DHT22temperature\": \"%s\"\n , \n\"DHT22humidity\": \"%s\"\n,\"DS18B20temperature\": \"%s\"\n}\n",
-				 currREL1State, currREL2State, temp, humi, tmp );
+				io_GPIOGet(GPIO_RELAY1), io_GPIOGet(GPIO_RELAY2), temp, humi, tmp );
 
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 	return HTTPD_CGI_DONE;
 }

@@ -4,154 +4,99 @@
 #include <osapi.h>
 #include "cgi.h"
 #include "fx.h"
+#include "light.h"
 #include "config.h"
 
-int ICACHE_FLASH_ATTR cgiLightSettings(HttpdConnData *connData) {
-	char buff[128];
-	extern struct fx G_fx_flames_1;
-	extern struct fx G_fx_simple_1;
-	extern struct fx G_fx_simple_2;
+int ICACHE_FLASH_ATTR cgiLightSettings(HttpdConnData *cd) {
 
-	if(connData->conn == NULL)
+	if(cd->conn == NULL)
 		//Connection aborted. Clean up.
 		return HTTPD_CGI_DONE;
 
-	sysCfg.light_driver_enable = (httpdFindArg(connData->post->buff, "light_driver_enable", buff, sizeof(buff)) > 0) ? 1:0;
+	cgiCheckBox( cd, "light_driver_enable", &config()->light_driver_enable );
+	cgiInt( cd, "delay_power_on", &config()->light_delay_power_on );
+	cgiInt( cd, "delay_power_off", &config()->light_delay_power_off );
+	// NOTE: check cast enum to int32_t
+	cgiInt( cd, "power_supply_configuration", (int32_t *)&config()->light_power_supply );
+	cgiInt( cd, "chain_size", &config()->light_chain_size );
+	cgiInt( cd, "light_udp_port", &config()->light_udp_port );
 
-	if( httpdFindArg(connData->post->buff, "delay_power_on", buff, sizeof(buff)) > 0 )
-		sysCfg.light_delay_power_on = atoi(buff);
+	cgiCheckBox( cd, "light_simple_1_enable", &config()->fx_simple_1_enable );
+	cgiInt( cd, "simple_1_start_no", &config()->fx_simple_1_start_no );
+	cgiInt( cd, "simple_1_stop_no", &config()->fx_simple_1_stop_no );
+	cgiRGB( cd, "simple_1", &config()->fx_simple_1_RGB );
 
-	if( httpdFindArg(connData->post->buff, "delay_power_off", buff, sizeof(buff)) > 0 )
-		sysCfg.light_delay_power_off = atoi(buff);
+	cgiCheckBox( cd, "light_simple_2_enable", &config()->fx_simple_2_enable );
+	cgiInt( cd, "simple_2_start_no", &config()->fx_simple_2_start_no );
+	cgiInt( cd, "simple_2_stop_no", &config()->fx_simple_2_stop_no );
+	cgiRGB( cd, "simple_2", &config()->fx_simple_2_RGB );
 
-	if( httpdFindArg(connData->post->buff, "power_supply_configuration", buff, sizeof(buff)) > 0 )
-		sysCfg.light_power_supply = atoi(buff);
+	cgiCheckBox( cd, "light_flame_1_enable", &config()->fx_flames_1_enable );
+	cgiInt( cd, "flame_1_start_no", &config()->fx_flames_1_start_no );
+	cgiInt( cd, "flame_1_stop_no", &config()->fx_flames_1_stop_no );
 
-	if( httpdFindArg(connData->post->buff, "chain_size", buff, sizeof(buff)) > 0 )
-		sysCfg.light_chain_size = atoi(buff);
+	cgiCheckBox( cd, "light_pulsar_1_enable", &config()->fx_pulsar_1_enable );
+	cgiInt( cd, "pulsar_1_start_no", &config()->fx_pulsar_1_start_no );
+	cgiInt( cd, "pulsar_1_stop_no", &config()->fx_pulsar_1_stop_no );
+	cgiInt( cd, "pulsar_1_delay", &config()->fx_pulsar_1_delay );
+	cgiRGB( cd, "pulsar_1_dizzy", &config()->fx_pulsar_1_RGB_dizzy );
+	cgiRGB( cd, "pulsar_1_fuzzy", &config()->fx_pulsar_1_RGB_fuzzy );
 
-	if( httpdFindArg(connData->post->buff, "light_udp_port", buff, sizeof(buff)) > 0 )
-		sysCfg.light_udp_port = atoi(buff);
-
-	sysCfg.fx_simple_1_enable = (httpdFindArg(connData->post->buff, "light_simple_1_enable", buff, sizeof(buff)) > 0) ? 1:0;
-	if( httpdFindArg(connData->post->buff, "simple_1_start_no", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_1_start_no = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "simple_1_stop_no", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_1_stop_no = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "simple_1_r", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_1_RGB.r = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "simple_1_g", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_1_RGB.g = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "simple_1_b", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_1_RGB.b = atoi(buff);
-
-	if( sysCfg.fx_simple_1_enable )
-		fx_register( &G_fx_simple_1 );
-	else
-		fx_deregister( &G_fx_simple_1 );
-
-	sysCfg.fx_simple_2_enable = (httpdFindArg(connData->post->buff, "light_simple_2_enable", buff, sizeof(buff)) > 0) ? 1:0;
-	if( httpdFindArg(connData->post->buff, "simple_2_start_no", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_2_start_no = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "simple_2_stop_no", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_2_stop_no = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "simple_2_r", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_2_RGB.r = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "simple_2_g", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_2_RGB.g = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "simple_2_b", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_simple_2_RGB.b = atoi(buff);
-
-	if( sysCfg.fx_simple_2_enable )
-		fx_register( &G_fx_simple_2 );
-	else
-		fx_deregister( &G_fx_simple_2 );
-
-	sysCfg.fx_flames_1_enable = (httpdFindArg(connData->post->buff, "light_flame_1_enable", buff, sizeof(buff)) > 0) ? 1:0;
-	if( httpdFindArg(connData->post->buff, "flame_1_start_no", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_flames_1_start_no = atoi(buff);
-	if( httpdFindArg(connData->post->buff, "flame_1_stop_no", buff, sizeof(buff)) > 0 )
-		sysCfg.fx_flames_1_stop_no = atoi(buff);
-	if( sysCfg.fx_flames_1_enable )
-		fx_register( &G_fx_flames_1 );
-	else
-		fx_deregister( &G_fx_flames_1 );
+	light_fx_reload();
 
 	CFG_Save();
-	httpdRedirect(connData, "/");
+	httpdRedirect(cd, "/");
 	return HTTPD_CGI_DONE;
 }
 
-void ICACHE_FLASH_ATTR tplLightSettings(HttpdConnData *connData, char *token, void **arg) {
-	char buff[128];
+void ICACHE_FLASH_ATTR tplLightSettings(HttpdConnData *cd, char *token, void **arg) {
+	char buff[64];
 
 	if( token == NULL ) return;
 
 	os_strcpy(buff, "Unknown");
 
-	if( os_strcmp(token, "light_driver_enable") == 0 )
-		os_strcpy(buff, sysCfg.light_driver_enable == 1 ? "checked" : "" );
+	tplCheckBox( buff, token, "light_driver_enable", config()->light_driver_enable );
 
-	if( os_strcmp(token, "name_relay1") == 0 )
-		os_strcpy(buff, (char *)sysCfg.relay1name);
-
-	if( os_strcmp(token, "name_relay2") == 0 )
-		os_strcpy(buff, (char *)sysCfg.relay2name);
+	tplText( buff, token, "name_relay1", config()->relay1name);
+	tplText( buff, token, "name_relay2", config()->relay2name);
 
 	if( os_strcmp(token, "selected_relay1") == 0 )
-		os_strcpy(buff, sysCfg.light_power_supply == 1 ? "selected" : "" );
+		os_strcpy(buff, config()->light_power_supply == 1 ? "selected" : "" );
 
 	if( os_strcmp(token, "selected_relay2") == 0 )
-		os_strcpy(buff, sysCfg.light_power_supply == 2 ? "selected" : "" );
+		os_strcpy(buff, config()->light_power_supply == 2 ? "selected" : "" );
 
 	if( os_strcmp(token, "selected_dontcare") == 0 )
-		os_strcpy(buff, sysCfg.light_power_supply == 0 ? "selected" : "" );
+		os_strcpy(buff, config()->light_power_supply == 0 ? "selected" : "" );
 
-	if( os_strcmp(token, "delay_power_on") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.light_delay_power_on);
+	tplInt( buff, token, "delay_power_on", (int)config()->light_delay_power_on );
+	tplInt( buff, token, "delay_power_off", (int)config()->light_delay_power_off );
+	tplInt( buff, token, "chain_size", (int)config()->light_chain_size );
+	tplInt( buff, token, "light_udp_port", (int)config()->light_udp_port );
 
-	if( os_strcmp(token, "delay_power_off") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.light_delay_power_off);
+	tplCheckBox( buff, token, "light_simple_1_enable", config()->fx_simple_1_enable );
 
-	if( os_strcmp(token, "chain_size") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.light_chain_size);
+	tplInt( buff, token, "simple_1_start_no", (int)config()->fx_simple_1_start_no );
+	tplInt( buff, token, "simple_1_stop_no", (int)config()->fx_simple_1_stop_no );
+	tplRGB( buff, token, &config()->fx_simple_1_RGB, "simple_1" );
 
-	if( os_strcmp(token, "light_udp_port") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.light_udp_port);
+	tplCheckBox( buff, token, "light_simple_2_enable", config()->fx_simple_2_enable );
 
-	if( os_strcmp(token, "light_simple_1_enable") == 0 )
-		os_strcpy(buff, sysCfg.fx_simple_1_enable == 1 ? "checked" : "" );
-	if( os_strcmp(token, "simple_1_start_no") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_start_no);
-	if( os_strcmp(token, "simple_1_stop_no") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_stop_no);
-	if( os_strcmp(token, "simple_1_rgb_r") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_RGB.r);
-	if( os_strcmp(token, "simple_1_rgb_g") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_RGB.g);
-	if( os_strcmp(token, "simple_1_rgb_b") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_1_RGB.b);
+	tplInt( buff, token, "simple_2_start_no", (int)config()->fx_simple_2_start_no);
+	tplInt( buff, token, "simple_2_stop_no", (int)config()->fx_simple_2_stop_no);
+	tplRGB( buff, token, &config()->fx_simple_2_RGB, "simple_2" );
 
-	if( os_strcmp(token, "light_simple_2_enable") == 0 )
-		os_strcpy(buff, sysCfg.fx_simple_2_enable == 1 ? "checked" : "" );
-	if( os_strcmp(token, "simple_2_start_no") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_start_no);
-	if( os_strcmp(token, "simple_2_stop_no") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_stop_no);
-	if( os_strcmp(token, "simple_2_rgb_r") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_RGB.r);
-	if( os_strcmp(token, "simple_2_rgb_g") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_RGB.g);
-	if( os_strcmp(token, "simple_2_rgb_b") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_simple_2_RGB.b);
+	tplCheckBox( buff, token, "light_flame_1_enable", config()->fx_flames_1_enable );
+	tplInt( buff, token, "flame_1_start_no", (int)config()->fx_flames_1_start_no);
+	tplInt( buff, token, "flame_1_stop_no", (int)config()->fx_flames_1_stop_no);
 
-	if( os_strcmp(token, "light_flame_1_enable") == 0 )
-		os_strcpy(buff, sysCfg.fx_flames_1_enable == 1 ? "checked" : "" );
-	if( os_strcmp(token, "flame_1_start_no") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_flames_1_start_no);
-	if( os_strcmp(token, "flame_1_stop_no") == 0 )
-		os_sprintf(buff,"%d", (int)sysCfg.fx_flames_1_stop_no);
+	tplCheckBox( buff, token, "light_pulsar_1_enable", config()->fx_pulsar_1_enable );
+	tplInt( buff, token, "pulsar_1_start_no", (int)config()->fx_pulsar_1_start_no);
+	tplInt( buff, token, "pulsar_1_stop_no", (int)config()->fx_pulsar_1_stop_no);
+	tplInt( buff, token, "pulsar_1_delay", (int)config()->fx_pulsar_1_delay);
+	tplRGB( buff, token, &config()->fx_pulsar_1_RGB_dizzy, "pulsar_1_dizzy" );
+	tplRGB( buff, token, &config()->fx_pulsar_1_RGB_fuzzy, "pulsar_1_fuzzy" );
 
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 }
-

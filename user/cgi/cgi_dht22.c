@@ -14,7 +14,7 @@
 #include "dht22.h"
 
 //Template code for the DHT 22 page.
-void ICACHE_FLASH_ATTR tplDHT(HttpdConnData *connData, char *token, void **arg) {
+void ICACHE_FLASH_ATTR tplDHT(HttpdConnData *cd, char *token, void **arg) {
 	char buff[128];
 	if (token==NULL) return;
 
@@ -25,24 +25,24 @@ void ICACHE_FLASH_ATTR tplDHT(HttpdConnData *connData, char *token, void **arg) 
 	if (os_strcmp(token, "humidity")==0) {
 		dht_humi_str(buff);
 	}
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 }
 
-int ICACHE_FLASH_ATTR cgiDHT22(HttpdConnData *connData) {
+int ICACHE_FLASH_ATTR cgiDHT22(HttpdConnData *cd) {
 	char buff[256];
 	char temp[32];
 	char humi[32];
 
-	httpdStartResponse(connData, 200);
-	httpdHeader(connData, "Content-Type", "text/json");
-	httpdHeader(connData, "Access-Control-Allow-Origin", "*");
-	httpdEndHeaders(connData);
+	httpdStartResponse(cd, 200);
+	httpdHeader(cd, "Content-Type", "text/json");
+	httpdHeader(cd, "Access-Control-Allow-Origin", "*");
+	httpdEndHeaders(cd);
 
 	dht_temp_str(temp);
 	dht_humi_str(humi);
 
 	os_sprintf(buff, "{ \n\"temperature\": \"%s\"\n , \n\"humidity\": \"%s\"\n}\n", temp, humi );
 
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 	return HTTPD_CGI_DONE;
 }

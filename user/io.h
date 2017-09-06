@@ -1,14 +1,14 @@
 #ifndef IO_H
 #define IO_H
 
-#define RELAY1_GPIO			4
-#define RELAY2_GPIO			5
+#define GPIO_RELAY1			4
+#define GPIO_RELAY2			5
 
-void ICACHE_FLASH_ATTR ioGPIO(int ena,int gpio);
+void ICACHE_FLASH_ATTR io_GPIOSet(int ena,int gpio);
+bool ICACHE_FLASH_ATTR io_GPIOGet(int gpio);
+
 void ICACHE_FLASH_ATTR ioLed(int ena);
-void ioInit(void);
 
-extern char currREL1State;
-extern char currREL2State;
+void io_GPIOIni(void);
 
 #endif // IO_H

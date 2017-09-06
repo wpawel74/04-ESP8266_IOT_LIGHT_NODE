@@ -2,57 +2,71 @@
 #define CGI_H
 
 #include "httpd.h"
+#include "fx.h"
 
-int cgiLed(HttpdConnData *connData);
-int tplLed(HttpdConnData *connData, char *token, void **arg);
+void ICACHE_FLASH_ATTR tplInt( char *buff, const char *token, const char *name, int value );
+void ICACHE_FLASH_ATTR tplText( char *buff, const char *token, const char *name, const char *text );
+void ICACHE_FLASH_ATTR tplCheckBox( char *buff, const char *token, const char *name, bool checked );
+void ICACHE_FLASH_ATTR tplRGB( char *buff, const char *token, const RGB *rgb, const char *name );
 
-int tplCounter(HttpdConnData *connData, char *token, void **arg);
-int tplAbout(HttpdConnData *connData, char *token, void **arg);
+int ICACHE_FLASH_ATTR cgiCheckBox(HttpdConnData *cd, const char *name, bool *dst);
+int ICACHE_FLASH_ATTR cgiInt(HttpdConnData *cd, const char *name, int32_t *dst);
+int ICACHE_FLASH_ATTR cgiRGB(HttpdConnData *cd, const char *name, RGB *rgb);
+int ICACHE_FLASH_ATTR cgiText(HttpdConnData *cd, const char *name, char *dst, int size);
 
-int cgiGPIO(HttpdConnData *connData);
-void tplGPIO(HttpdConnData *connData, char *token, void **arg);
+int cgiLed(HttpdConnData *cd);
+int tplLed(HttpdConnData *cd, char *token, void **arg);
 
-void tplDHT(HttpdConnData *connData, char *token, void **arg);
-int cgiDHT22(HttpdConnData *connData);
+int tplCounter(HttpdConnData *cd, char *token, void **arg);
+int tplAbout(HttpdConnData *cd, char *token, void **arg);
 
-void tplDS18b20(HttpdConnData *connData, char *token, void **arg);
-int cgiDS18b20(HttpdConnData *connData);
+int cgiGPIO(HttpdConnData *cd);
+void tplGPIO(HttpdConnData *cd, char *token, void **arg);
 
-int cgiState(HttpdConnData *connData);
+void tplDHT(HttpdConnData *cd, char *token, void **arg);
+int cgiDHT22(HttpdConnData *cd);
 
-int cgiUI(HttpdConnData *connData);
-void tplUI(HttpdConnData *connData, char *token, void **arg);
+void tplDS18b20(HttpdConnData *cd, char *token, void **arg);
+int cgiDS18b20(HttpdConnData *cd);
 
-void tplMQTT(HttpdConnData *connData, char *token, void **arg);
-int cgiMQTT(HttpdConnData *connData);
+int cgiState(HttpdConnData *cd);
 
-void tplHTTPD(HttpdConnData *connData, char *token, void **arg);
-int cgiHTTPD(HttpdConnData *connData);
+int cgiUI(HttpdConnData *cd);
+void tplUI(HttpdConnData *cd, char *token, void **arg);
 
-void tplBroadcastD(HttpdConnData *connData, char *token, void **arg);
-int cgiBroadcastD(HttpdConnData *connData);
+void tplMQTT(HttpdConnData *cd, char *token, void **arg);
+int cgiMQTT(HttpdConnData *cd);
 
-void tplNTP(HttpdConnData *connData, char *token, void **arg);
-int cgiNTP(HttpdConnData *connData);
+void tplHTTPD(HttpdConnData *cd, char *token, void **arg);
+int cgiHTTPD(HttpdConnData *cd);
 
-void tplRLYSettings(HttpdConnData *connData, char *token, void **arg);
-int cgiRLYSettings(HttpdConnData *connData);
+void tplBroadcastD(HttpdConnData *cd, char *token, void **arg);
+int cgiBroadcastD(HttpdConnData *cd);
 
-int cgiReset(HttpdConnData *connData);
+void tplNTP(HttpdConnData *cd, char *token, void **arg);
+int cgiNTP(HttpdConnData *cd);
 
-void tplSensorSettings(HttpdConnData *connData, char *token, void **arg);
-int cgiSensorSettings(HttpdConnData *connData);
+void tplRLYSettings(HttpdConnData *cd, char *token, void **arg);
+int cgiRLYSettings(HttpdConnData *cd);
 
-void tplBMP180(HttpdConnData *connData, char *token, void **arg);
-int cgiBMP180(HttpdConnData *connData);
+int cgiReset(HttpdConnData *cd);
 
-void tplRTC(HttpdConnData *connData, char *token, void **arg);
-int cgiRTC(HttpdConnData *connData);
+void tplSensorSettings(HttpdConnData *cd, char *token, void **arg);
+int cgiSensorSettings(HttpdConnData *cd);
 
-int cgiLightSettings(HttpdConnData *connData);
-void tplLightSettings(HttpdConnData *connData, char *token, void **arg);
+void tplBMP180(HttpdConnData *cd, char *token, void **arg);
+int cgiBMP180(HttpdConnData *cd);
 
-int cgiLight(HttpdConnData *connData);
-void tplLight(HttpdConnData *connData, char *token, void **arg);
+void tplRTC(HttpdConnData *cd, char *token, void **arg);
+int cgiRTC(HttpdConnData *cd);
+
+int cgiLightSettings(HttpdConnData *cd);
+void tplLightSettings(HttpdConnData *cd, char *token, void **arg);
+
+int cgiLight(HttpdConnData *cd);
+void tplLight(HttpdConnData *cd, char *token, void **arg);
+
+int cgiAlarmSettings(HttpdConnData *cd);
+void tplAlarmSettings(HttpdConnData *cd, char *token, void **arg);
 
 #endif // CGI_H

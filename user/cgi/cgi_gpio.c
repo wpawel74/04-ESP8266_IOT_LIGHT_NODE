@@ -15,90 +15,63 @@
 #include "config.h"
 
 //Cgi that turns the Relays on or off according to the 'relayX' param in the GET data
-int ICACHE_FLASH_ATTR cgiGPIO(HttpdConnData *connData) {
-	int len;
+int ICACHE_FLASH_ATTR cgiGPIO(HttpdConnData *cd) {
 	char buff[128];
-	int gotcmd=0;
+	int32_t gotcmd_r1 = -1;
+	int32_t gotcmd_r2 = -1;
 
-	if (connData->conn==NULL) {
+	if ( cd->conn == NULL ) {
 		//Connection aborted. Clean up.
 		return HTTPD_CGI_DONE;
 	}
 
-	len=httpdFindArg(connData->getArgs, "relay1", buff, sizeof(buff));
-	if (len>0) {
-		currREL1State=atoi(buff);
-		ioGPIO(currREL1State, RELAY1_GPIO);
-		gotcmd=1;
-	}
+	cgiInt( cd, "relay1", &gotcmd_r1 );
+	if ( gotcmd_r1 != -1 )
+		io_GPIOSet( gotcmd_r1, GPIO_RELAY1);
 
-	len=httpdFindArg(connData->getArgs, "relay2", buff, sizeof(buff));
-	if (len>0) {
-		currREL2State=atoi(buff);
-		ioGPIO(currREL2State, RELAY2_GPIO);
-		gotcmd=1;
-	}
+	cgiInt( cd, "relay2", &gotcmd_r2);
+	if ( gotcmd_r2 != -1 )
+		io_GPIOSet( gotcmd_r2, GPIO_RELAY2);
 
-	if(gotcmd==1) {
-		if( sysCfg.relay_latching_enable) {
-			sysCfg.relay_1_state=currREL1State;
-			sysCfg.relay_2_state=currREL2State;
+	if( gotcmd_r1 != -1 || gotcmd_r2 != -1 ) {
+		if( config()->relay_latching_enable ) {
+			sysCfg.relay_1_state = io_GPIOGet(GPIO_RELAY1);
+			sysCfg.relay_2_state = io_GPIOGet(GPIO_RELAY2);
 			CFG_Save();
 		}
 
-		httpdRedirect(connData, "relay.tpl");
+		httpdRedirect(cd, "relay.tpl");
 		return HTTPD_CGI_DONE;
 	} else { //with no parameters returns JSON with relay state
 
-		httpdStartResponse(connData, 200);
-		httpdHeader(connData, "Content-Type", "text/json");
-		httpdHeader(connData, "Access-Control-Allow-Origin", "*");
-		httpdEndHeaders(connData);
+		httpdStartResponse(cd, 200);
+		httpdHeader(cd, "Content-Type", "text/json");
+		httpdHeader(cd, "Access-Control-Allow-Origin", "*");
+		httpdEndHeaders(cd);
 
-		len = os_sprintf(buff, "{\"relay1\": %d\n,\"relay1name\":\"%s\",\n\"relay2\": %d\n,\"relay2name\":\"%s\" }\n", 
-					currREL1State,(char *)sysCfg.relay1name,
-					currREL2State,(char *)sysCfg.relay2name );
-		httpdSend(connData, buff, -1);
+		os_sprintf(buff, "{\"relay1\": %d\n,\"relay1name\":\"%s\",\n\"relay2\": %d\n,\"relay2name\":\"%s\" }\n", 
+					io_GPIOGet(GPIO_RELAY1), config()->relay1name,
+					io_GPIOGet(GPIO_RELAY2), config()->relay2name );
+		httpdSend(cd, buff, -1);
 		return HTTPD_CGI_DONE;
 	}
 }
 
 //Template code for the led page.
-void ICACHE_FLASH_ATTR tplGPIO(HttpdConnData *connData, char *token, void **arg) {
+void ICACHE_FLASH_ATTR tplGPIO(HttpdConnData *cd, char *token, void **arg) {
 	char buff[128];
-	if (token==NULL) return;
+	if ( token == NULL ) return;
 
 	os_strcpy(buff, "Unknown");
 
-	if (os_strcmp(token, "relay1name")==0) {
-		os_strcpy(buff, (char *)sysCfg.relay1name);
-	}
-	
-	if (os_strcmp(token, "relay2name")==0) {
-		os_strcpy(buff, (char *)sysCfg.relay2name);
-	}
+	tplText( buff, token, "relay1name", config()->relay1name);
+	tplText( buff, token, "relay2name", config()->relay2name);
 
-	if (os_strcmp(token, "relay1")==0) {
-		if (currREL1State) {
-			os_strcpy(buff, "on");
-		} else {
-			os_strcpy(buff, "off");
-		}
-		os_printf("Relay 1 is now ");
-		os_printf(buff);
-		os_printf("\n ");
-	}
+	if( os_strcmp(token, "relay1") == 0 )
+		os_strcpy(buff, io_GPIOGet(GPIO_RELAY1) ? "on": "off");
 
-	if (os_strcmp(token, "relay2")==0) {
-		if (currREL2State) {
-			os_strcpy(buff, "on");
-		} else {
-			os_strcpy(buff, "off");
-		}
-		os_printf("Relay 2 is now ");
-		os_printf(buff);
-		os_printf("\n ");
-	}
+	if( os_strcmp(token, "relay2") == 0 )
+		os_strcpy(buff, io_GPIOGet(GPIO_RELAY2) ? "on": "off");
 
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 }

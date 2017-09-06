@@ -70,19 +70,15 @@ void ICACHE_FLASH_ATTR mqttDataCb(uint32_t *args, const char* topic, uint32_t to
 	if (os_strcmp(strSubsTopic,strTopic) == 0 ) {
 		os_printf("Relay %d is now: %s \r\n", relayNum-'0', strData);
 
-		if(relayNum=='1') {
-			currREL1State=atoi(strData);
-			ioGPIO(currREL1State,9);
-		}
+		if(relayNum=='1')
+			io_GPIOSet(atoi(strData), GPIO_RELAY1);
 
-		if(relayNum=='2') {
-			currREL2State=atoi(strData);
-			ioGPIO(currREL2State,10);
-		}
+		if(relayNum=='2')
+			io_GPIOSet(atoi(strData), GPIO_RELAY2);
 
 		if( sysCfg.relay_latching_enable) {
-			sysCfg.relay_1_state=currREL1State;
-			sysCfg.relay_2_state=currREL2State;
+			sysCfg.relay_1_state = io_GPIOGet(GPIO_RELAY1);
+			sysCfg.relay_2_state = io_GPIOGet(GPIO_RELAY2);
 			CFG_Save();
 		}
 	}

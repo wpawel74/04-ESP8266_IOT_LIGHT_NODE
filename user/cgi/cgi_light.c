@@ -6,34 +6,34 @@
 #include "config.h"
 #include "light.h"
 
-int ICACHE_FLASH_ATTR cgiLight(HttpdConnData *connData) {
+int ICACHE_FLASH_ATTR cgiLight(HttpdConnData *cd) {
 	char buff[128];
 
-	if(connData->conn == NULL)
+	if(cd->conn == NULL)
 		//Connection aborted. Clean up.
 		return HTTPD_CGI_DONE;
 
-	if( httpdFindArg(connData->getArgs, "light", buff, sizeof(buff)) > 0 ){
+	if( httpdFindArg(cd->getArgs, "light", buff, sizeof(buff)) > 0 ){
 		light_enable( atoi(buff) ? true: false );
-		httpdRedirect(connData, "relay.tpl");
+		httpdRedirect(cd, "relay.tpl");
 		return HTTPD_CGI_DONE;
 	}
 
-	httpdStartResponse(connData, 200);
-	httpdHeader(connData, "Content-Type", "text/json");
-	httpdHeader(connData, "Access-Control-Allow-Origin", "*");
-	httpdEndHeaders(connData);
+	httpdStartResponse(cd, 200);
+	httpdHeader(cd, "Content-Type", "text/json");
+	httpdHeader(cd, "Access-Control-Allow-Origin", "*");
+	httpdEndHeaders(cd);
 
 	os_sprintf(buff, "{\"light\": %d\n}\n", light_is_enabled() );
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 	return HTTPD_CGI_DONE;
 }
 
-void ICACHE_FLASH_ATTR tplLight(HttpdConnData *connData, char *token, void **arg) {
+void ICACHE_FLASH_ATTR tplLight(HttpdConnData *cd, char *token, void **arg) {
 	char buff[128];
 
 	if( token == NULL ) return;
 
 	os_strcpy(buff, "Unknown");
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 }

@@ -33,6 +33,7 @@
 #include "os_type.h"
 #include "user_config.h"
 #include "fx.h"
+#include "alarm.h"
 
 typedef enum POWER_SOURCE {
 	DONT_CARE	= 0,
@@ -69,55 +70,65 @@ typedef struct{
 	uint32_t broadcastd_thingspeak_channel;
 	uint8_t broadcastd_ro_apikey[32];
 
-	uint32_t ntp_enable;
+	bool ntp_enable;
 	int32_t ntp_tz;
 	char ntp_servers[3][32];
 
-	uint32_t mqtt_enable;
+	bool mqtt_enable;
 	uint8_t mqtt_host[64];
-	uint32_t mqtt_port;
-	uint32_t mqtt_keepalive;
+	int32_t mqtt_port;
+	int32_t mqtt_keepalive;
 	uint8_t mqtt_devid[32];
 	uint8_t mqtt_user[32];
 	uint8_t mqtt_pass[64];
-	uint32_t mqtt_use_ssl;
+	bool mqtt_use_ssl;
 	uint8_t mqtt_relay_subs_topic[64];
 	uint8_t mqtt_dht22_temp_pub_topic[64];
 	uint8_t mqtt_dht22_humi_pub_topic[64];
 	uint8_t mqtt_ds18b20_temp_pub_topic[64];
 
-	uint32_t sensor_ds18b20_enable;
-	uint32_t sensor_dht22_enable;
-	uint32_t sensor_bmp180_enable;
+	bool sensor_ds18b20_enable;
+	bool sensor_dht22_enable;
+	bool sensor_bmp180_enable;
 
-	uint32_t relay_latching_enable;
+	bool relay_latching_enable;
 	uint32_t relay_1_state;
 	uint32_t relay_2_state;
-	uint8_t relay1name[24];
-	uint8_t relay2name[24];
+	char relay1name[24];
+	char relay2name[24];
 
-	uint32_t light_driver_enable;
+	bool light_driver_enable;
 	POWER_SOURCE light_power_supply;
-	uint32_t light_delay_power_on;
-	uint32_t light_delay_power_off;
-	uint32_t light_udp_port;
-	uint32_t light_chain_size;
+	int32_t light_delay_power_on;
+	int32_t light_delay_power_off;
+	int32_t light_udp_port;
+	int32_t light_chain_size;
 
-	uint32_t fx_poll_time;
+	int32_t fx_poll_time;
 
-	uint32_t fx_simple_1_enable;
-	uint32_t fx_simple_1_start_no;
-	uint32_t fx_simple_1_stop_no;
+	bool fx_simple_1_enable;
+	int32_t fx_simple_1_start_no;
+	int32_t fx_simple_1_stop_no;
 	struct RGB fx_simple_1_RGB;
 
-	uint32_t fx_simple_2_enable;
-	uint32_t fx_simple_2_start_no;
-	uint32_t fx_simple_2_stop_no;
+	bool fx_simple_2_enable;
+	int32_t fx_simple_2_start_no;
+	int32_t fx_simple_2_stop_no;
 	struct RGB fx_simple_2_RGB;
 
-	uint32_t fx_flames_1_enable;
-	uint32_t fx_flames_1_start_no;
-	uint32_t fx_flames_1_stop_no;
+	bool fx_flames_1_enable;
+	int32_t fx_flames_1_start_no;
+	int32_t fx_flames_1_stop_no;
+
+	bool fx_pulsar_1_enable;
+	int32_t fx_pulsar_1_start_no;
+	int32_t fx_pulsar_1_stop_no;
+	int32_t fx_pulsar_1_delay;
+	struct RGB fx_pulsar_1_RGB_fuzzy;
+	struct RGB fx_pulsar_1_RGB_dizzy;
+
+	int32_t alarm_duration;
+	struct alarm alarms[6];
 
 } SYSCFG;
 

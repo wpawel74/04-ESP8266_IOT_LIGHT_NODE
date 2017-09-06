@@ -13,50 +13,31 @@
 #include "cgi.h"
 #include "config.h"
 
-int ICACHE_FLASH_ATTR cgiRLYSettings(HttpdConnData *connData) {
-	int len;
-	char buff[128];
-
-	if (connData->conn==NULL) {
+int ICACHE_FLASH_ATTR cgiRLYSettings(HttpdConnData *cd) {
+	if (cd->conn==NULL) {
 		//Connection aborted. Clean up.
 		return HTTPD_CGI_DONE;
 	}
 
-	len=httpdFindArg(connData->post->buff, "relay-latching-enable", buff, sizeof(buff));
-	sysCfg.relay_latching_enable = (len > 0) ? 1:0;
+	cgiCheckBox( cd, "relay-latching-enable", &config()->relay_latching_enable );
 
-	len=httpdFindArg(connData->post->buff, "relay1name", buff, sizeof(buff));
-	if (len>0) {
-		os_strcpy((char *)sysCfg.relay1name,buff);
-	}
-
-	len=httpdFindArg(connData->post->buff, "relay2name", buff, sizeof(buff));
-	if (len>0) {
-		os_strcpy((char *)sysCfg.relay2name,buff);
-	}
+	cgiText( cd, "relay1name", config()->relay1name, sizeof(config()->relay1name) );
+	cgiText( cd, "relay2name", config()->relay2name, sizeof(config()->relay2name) );
 
 	CFG_Save();
-	httpdRedirect(connData, "/");
+	httpdRedirect(cd, "/");
 	return HTTPD_CGI_DONE;
 }
 
-void ICACHE_FLASH_ATTR tplRLYSettings(HttpdConnData *connData, char *token, void **arg) {
+void ICACHE_FLASH_ATTR tplRLYSettings(HttpdConnData *cd, char *token, void **arg) {
 	char buff[128];
-	if (token==NULL) return;
+	if ( token == NULL ) return;
 
 	os_strcpy(buff, "Unknown");
 
-	if (os_strcmp(token, "relay-latching-enable")==0) {
-		os_strcpy(buff, sysCfg.relay_latching_enable == 1 ? "checked" : "" );
-	}
+	tplCheckBox( buff, token, "relay-latching-enable", config()->relay_latching_enable );
+	tplText( buff, token, "relay1name", config()->relay1name );
+	tplText( buff, token, "relay2name", config()->relay2name );
 
-	if (os_strcmp(token, "relay1name")==0) {
-		os_strcpy(buff, (char *)sysCfg.relay1name);
-	}
-
-	if (os_strcmp(token, "relay2name")==0) {
-		os_strcpy(buff, (char *)sysCfg.relay2name);
-	}
-
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 }

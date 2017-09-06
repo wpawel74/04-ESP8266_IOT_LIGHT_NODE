@@ -54,11 +54,11 @@ void ICACHE_FLASH_ATTR light_enable_power_supply( bool on ) {
 	switch( config()->light_power_supply ){
 	case RELAY_1:
 		sysCfg.relay_1_state = on;
-		ioGPIO((int)sysCfg.relay_1_state, RELAY1_GPIO);
+		io_GPIOSet((int)sysCfg.relay_1_state, GPIO_RELAY1);
 		break;
 	case RELAY_2:
 		sysCfg.relay_2_state = on;
-		ioGPIO((int)sysCfg.relay_2_state, RELAY2_GPIO);
+		io_GPIOSet((int)sysCfg.relay_2_state, GPIO_RELAY2);
 		break;
 	case DONT_CARE:
 	default:
@@ -81,18 +81,59 @@ void ICACHE_FLASH_ATTR light_enable( bool on ) {
 	os_timer_disarm(&G_light_timer);
 	os_timer_setfn(&G_light_timer, light_delay_timer_callback, &G_on);
 	os_timer_arm(&G_light_timer, on ? config()->light_delay_power_on: config()->light_delay_power_off, 0);
+	os_printf( "light event received: %s\n", on ? "enable" : "disable" );
 }
 
-bool light_is_enabled(void){
+bool ICACHE_FLASH_ATTR light_is_enabled(void){
 	return G_on;
 }
 
-void light_ini(void) {
-	extern struct fx G_fx_flames_1;
-	extern struct fx G_fx_simple_1;
-	extern struct fx G_fx_simple_2;
+void ICACHE_FLASH_ATTR light_fx_reload(void){
 	extern void ICACHE_FLASH_ATTR simple_set_RGB( void *prv, const struct RGB *rgb );
+	extern struct fx G_fx_simple_1;
+	G_fx_simple_1.fx.begin = config()->fx_simple_1_start_no;
+	G_fx_simple_1.fx.end = config()->fx_simple_1_stop_no;
+	simple_set_RGB( G_fx_simple_1.fx.prv, &config()->fx_simple_1_RGB );
+	if( config()->fx_simple_1_enable )
+		fx_register( &G_fx_simple_1 );
+	else
+		fx_deregister( &G_fx_simple_1 );
 
+	extern struct fx G_fx_simple_2;
+	G_fx_simple_2.fx.begin = config()->fx_simple_2_start_no;
+	G_fx_simple_2.fx.end = config()->fx_simple_2_stop_no;
+	simple_set_RGB( G_fx_simple_2.fx.prv, &config()->fx_simple_2_RGB );
+	if( config()->fx_simple_2_enable )
+		fx_register( &G_fx_simple_2 );
+	else
+		fx_deregister( &G_fx_simple_2 );
+
+	extern struct fx G_fx_flames_1;
+	G_fx_flames_1.fx.begin = config()->fx_flames_1_start_no;
+	G_fx_flames_1.fx.end = config()->fx_flames_1_stop_no;
+	if( config()->fx_flames_1_enable )
+		fx_register( &G_fx_flames_1 );
+	else
+		fx_deregister( &G_fx_flames_1 );
+
+	extern void ICACHE_FLASH_ATTR pulsar_set_RGB_dizzy( void *prv, const struct RGB *rgb );
+	extern void ICACHE_FLASH_ATTR pulsar_set_RGB_fuzzy( void *prv, const struct RGB *rgb );
+	extern void ICACHE_FLASH_ATTR pulsar_set_delay( void *prv, uint32_t delay );
+	extern struct fx G_fx_pulsar_1;
+	G_fx_pulsar_1.fx.begin = config()->fx_pulsar_1_start_no;
+	G_fx_pulsar_1.fx.end = config()->fx_pulsar_1_stop_no;
+	G_fx_pulsar_1.fx.end = config()->fx_pulsar_1_stop_no;
+	pulsar_set_RGB_fuzzy( G_fx_pulsar_1.fx.prv, &config()->fx_pulsar_1_RGB_fuzzy );
+	pulsar_set_RGB_dizzy( G_fx_pulsar_1.fx.prv, &config()->fx_pulsar_1_RGB_dizzy );
+
+	if( config()->fx_pulsar_1_enable )
+		fx_register( &G_fx_pulsar_1 );
+	else
+		fx_deregister( &G_fx_pulsar_1 );
+
+}
+
+void ICACHE_FLASH_ATTR light_ini(void) {
 	os_timer_disarm(&G_light_timer);
 
 #ifdef CONFIG_WS2812
@@ -101,24 +142,5 @@ void light_ini(void) {
 
 	fx_ini();
 
-#if 1
-	G_fx_simple_1.fx.begin = sysCfg.fx_simple_1_start_no;
-	G_fx_simple_1.fx.end = sysCfg.fx_simple_1_stop_no;
-	simple_set_RGB( G_fx_simple_1.fx.prv, &config()->fx_simple_1_RGB );
-
-	G_fx_simple_2.fx.begin = sysCfg.fx_simple_2_start_no;
-	G_fx_simple_2.fx.end = sysCfg.fx_simple_2_stop_no;
-	simple_set_RGB( G_fx_simple_2.fx.prv, &config()->fx_simple_2_RGB );
-
-	G_fx_flames_1.fx.begin = sysCfg.fx_flames_1_start_no;
-	G_fx_flames_1.fx.end = sysCfg.fx_flames_1_stop_no;
-
-	if( sysCfg.fx_simple_1_enable )
-		fx_register( &G_fx_simple_1 );
-//	if( sysCfg.fx_simple_2_enable )
-//		fx_register( &G_fx_simple_2 );
-//	if( sysCfg.fx_flames_1_enable )
-//		fx_register( &G_fx_flames_1 );
-#endif
-
+	light_fx_reload();
 }

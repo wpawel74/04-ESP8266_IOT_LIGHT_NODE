@@ -147,19 +147,29 @@ void ICACHE_FLASH_ATTR CFG_Load()
 
 		sysCfg.fx_poll_time = LIGHT_COMFORT_POLL_TIME;
 
-		sysCfg.fx_simple_1_enable = 0;
+		sysCfg.fx_simple_1_enable = false;
 		sysCfg.fx_simple_1_start_no = 0;
 		sysCfg.fx_simple_1_stop_no = 1;
 		sysCfg.fx_simple_1_RGB = (struct RGB) { 100, 100, 100 };
 
-		sysCfg.fx_simple_2_enable = 0;
+		sysCfg.fx_simple_2_enable = false;
 		sysCfg.fx_simple_2_start_no = 2;
 		sysCfg.fx_simple_2_stop_no = 3;
 		sysCfg.fx_simple_2_RGB = (struct RGB) { 200, 200, 200 };
 
-		sysCfg.fx_flames_1_enable = 0;
+		sysCfg.fx_flames_1_enable = false;
 		sysCfg.fx_flames_1_start_no = 0;
 		sysCfg.fx_flames_1_stop_no = 0;
+
+
+		sysCfg.fx_pulsar_1_enable = false;
+		sysCfg.fx_pulsar_1_start_no = 0;
+		sysCfg.fx_pulsar_1_stop_no = 0;
+		sysCfg.fx_pulsar_1_delay = 1000;
+		sysCfg.fx_pulsar_1_RGB_fuzzy = (struct RGB) { 0, 0, 0 };
+		sysCfg.fx_pulsar_1_RGB_dizzy = (struct RGB) { 255, 255, 255 };
+
+		sysCfg.alarm_duration = 30000; // 30 s
 
 		CFG_Save();
 		os_printf("default configurations saved\r\n");

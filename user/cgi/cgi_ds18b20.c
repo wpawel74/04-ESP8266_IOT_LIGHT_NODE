@@ -16,7 +16,7 @@
 #include "config.h"
 
 //Template code for the DS18b20 page.
-void ICACHE_FLASH_ATTR tplDS18b20(HttpdConnData *connData, char *token, void **arg) {
+void ICACHE_FLASH_ATTR tplDS18b20(HttpdConnData *cd, char *token, void **arg) {
 	char buff[384];
 	if (token==NULL) return;
 
@@ -51,20 +51,20 @@ void ICACHE_FLASH_ATTR tplDS18b20(HttpdConnData *connData, char *token, void **a
 		}
 	}
 
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 }
 
-int ICACHE_FLASH_ATTR cgiDS18b20(HttpdConnData *connData) {
+int ICACHE_FLASH_ATTR cgiDS18b20(HttpdConnData *cd) {
 	char buff[256];
 	char tmp[32];
-	httpdStartResponse(connData, 200);
-	httpdHeader(connData, "Content-Type", "text/json");
-	httpdHeader(connData, "Access-Control-Allow-Origin", "*");
-	httpdEndHeaders(connData);
+	httpdStartResponse(cd, 200);
+	httpdHeader(cd, "Content-Type", "text/json");
+	httpdHeader(cd, "Access-Control-Allow-Origin", "*");
+	httpdEndHeaders(cd);
 
 	ds_str(tmp,0);
 	os_sprintf( buff, "{ \n\"temperature\": \"%s\"\n}\n",tmp );
 
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 	return HTTPD_CGI_DONE;
 }

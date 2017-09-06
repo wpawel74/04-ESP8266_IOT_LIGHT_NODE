@@ -12,63 +12,39 @@
 #include <osapi.h>
 #include "httpd.h"
 #include "cgi.h"
-#include "io.h"
 #include "config.h"
 
-void ICACHE_FLASH_ATTR tplHTTPD(HttpdConnData *connData, char *token, void **arg) {
+void ICACHE_FLASH_ATTR tplHTTPD(HttpdConnData *cd, char *token, void **arg) {
 	char buff[128];
-	if (token==NULL) return;
+	if ( token == NULL ) return;
 
 	os_strcpy(buff, "Unknown");
 
-	if (os_strcmp(token, "httpd-auth")==0) {
-		os_sprintf(buff,"%d", (int)sysCfg.httpd_auth);
-	}
-	
-	if (os_strcmp(token, "httpd-port")==0) {
-		os_sprintf(buff,"%d", (int)sysCfg.httpd_port);
-	}
+	tplInt( buff, token, "httpd-auth", (int)sysCfg.httpd_auth);
+	tplInt( buff, token, "httpd-port", (int)sysCfg.httpd_port);
+	tplText( buff, token, "httpd-user", (char *)sysCfg.httpd_user);
+	tplText( buff, token, "httpd-pass", (char *)sysCfg.httpd_pass);
 
-	if (os_strcmp(token, "httpd-user")==0) {
-		os_strcpy(buff, (char *)sysCfg.httpd_user);
-	}
-
-	if (os_strcmp(token, "httpd-pass")==0) {
-		os_strcpy(buff, (char *)sysCfg.httpd_pass);
-	}
-
-	httpdSend(connData, buff, -1);
+	httpdSend(cd, buff, -1);
 }
 
-int ICACHE_FLASH_ATTR cgiHTTPD(HttpdConnData *connData) {
-	char buff[128];
+int ICACHE_FLASH_ATTR cgiHTTPD(HttpdConnData *cd) {
+	char buff[64];
 	int len;
 
-	if (connData->conn==NULL) {
+	if (cd->conn==NULL) {
 		//Connection aborted. Clean up.
 		return HTTPD_CGI_DONE;
 	}
 
-	len=httpdFindArg(connData->post->buff, "httpd-auth", buff, sizeof(buff));
+	len = httpdFindArg(cd->post->buff, "httpd-auth", buff, sizeof(buff));
 	sysCfg.httpd_auth = (len > 0) ? 1:0;
 
-	len=httpdFindArg(connData->post->buff, "httpd-port", buff, sizeof(buff));
-	if (len>0) {
-		sysCfg.httpd_port=atoi(buff);
-	}
-
-	len=httpdFindArg(connData->post->buff, "httpd-user", buff, sizeof(buff));
-	if (len>0) {
-		os_strcpy((char *)sysCfg.httpd_user,buff);
-	}
-
-	len=httpdFindArg(connData->post->buff, "httpd-pass", buff, sizeof(buff));
-	if (len>0) {
-		os_strcpy((char *)sysCfg.httpd_pass,buff);
-	}
+	cgiInt( cd, "httpd-port", (int32_t *)&config()->httpd_port );
+	cgiText( cd, "httpd-user", (char *)config()->httpd_user, sizeof(config()->httpd_user) );
+	cgiText( cd, "httpd-pass", (char *)config()->httpd_pass, sizeof(config()->httpd_user) );
 
 	CFG_Save();
-
-	httpdRedirect(connData, "/");
+	httpdRedirect( cd, "/" );
 	return HTTPD_CGI_DONE;
 }

@@ -13,46 +13,28 @@
 #include "cgi.h"
 #include "config.h"
 
-int ICACHE_FLASH_ATTR cgiSensorSettings(HttpdConnData *connData) {
-	int len;
-	char buff[128];
-
-	if (connData->conn==NULL) {
+int ICACHE_FLASH_ATTR cgiSensorSettings(HttpdConnData *cd) {
+	if ( cd->conn == NULL ) {
 		//Connection aborted. Clean up.
 		return HTTPD_CGI_DONE;
 	}
 
-	len=httpdFindArg(connData->post->buff, "sensor-ds18b20-enable", buff, sizeof(buff));
-	sysCfg.sensor_ds18b20_enable = (len > 0) ? 1:0;
-
-	len=httpdFindArg(connData->post->buff, "sensor-dht22-enable", buff, sizeof(buff));
-	sysCfg.sensor_dht22_enable = (len > 0) ? 1:0;
-
-	len=httpdFindArg(connData->post->buff, "sensor-bmp180-enable", buff, sizeof(buff));
-	sysCfg.sensor_bmp180_enable = (len > 0) ? 1:0;
+	cgiCheckBox( cd, "sensor-ds18b20-enable", &config()->sensor_ds18b20_enable );
+	cgiCheckBox( cd, "sensor-dht22-enable", &config()->sensor_dht22_enable );
+	cgiCheckBox( cd, "sensor-bmp180-enable", &config()->sensor_bmp180_enable );
 
 	CFG_Save();
-	httpdRedirect(connData, "/");
+	httpdRedirect(cd, "/");
 	return HTTPD_CGI_DONE;
 }
 
-void ICACHE_FLASH_ATTR tplSensorSettings(HttpdConnData *connData, char *token, void **arg) {
-	char buff[128];
-	if (token==NULL) return;
-
+void ICACHE_FLASH_ATTR tplSensorSettings(HttpdConnData *cd, char *token, void **arg) {
+	char buff[64];
+	if (token == NULL) return;
 	os_strcpy(buff, "Unknown");
 
-	if (os_strcmp(token, "sensor-ds18b20-enable")==0) {
-		os_strcpy(buff, sysCfg.sensor_ds18b20_enable == 1 ? "checked" : "" );
-	}
-
-	if (os_strcmp(token, "sensor-dht22-enable")==0) {
-		os_strcpy(buff, sysCfg.sensor_dht22_enable == 1 ? "checked" : "" );
-	}
-
-	if (os_strcmp(token, "sensor-bmp180-enable")==0) {
-		os_strcpy(buff, sysCfg.sensor_bmp180_enable == 1 ? "checked" : "" );
-	}
-
-	httpdSend(connData, buff, -1);
+	tplCheckBox( buff, token, "sensor-ds18b20-enable", config()->sensor_ds18b20_enable );
+	tplCheckBox( buff, token, "sensor-dht22-enable", config()->sensor_dht22_enable );
+	tplCheckBox( buff, token, "sensor-bmp180-enable", config()->sensor_bmp180_enable);
+	httpdSend(cd, buff, -1);
 }
