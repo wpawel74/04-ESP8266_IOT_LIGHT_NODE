@@ -1,6 +1,7 @@
-<html><head><title>Broadcaset Daemon Settings</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<link rel="stylesheet" type="text/css" href="../style.css">
+<html>
+	<head><title>Broadcaset Daemon Settings</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="../style.css">
 <script type="text/javascript">
 
 window.onload=function(e) {
@@ -25,25 +26,21 @@ sd('broadcastd-ro-apikey',v);
 }
 
 </script>
+	</head>
 
-</head>
-<body>
-<div id="main">
-<p>
-<b>Broadcast Daemon Settings</b>
-</p>
-<form name="broadcasetdform" action="broadcastd.cgi" method="post">
-
-<table>
-<tr><td>HTTP GET broadcast enabled?:</td><td><input type="checkbox" name="broadcastd-enable" id="broadcastd-enable" onclick="di();"/></td></tr>
-<tr><td>Site:</td><td><input type="text" name="broadcastd-host" id="broadcastd-host" value="%broadcastd-host%"/>     </td></tr>
-<tr><td>Port:</td><td><input type="text" name="broadcastd-port" id="broadcastd-port" value="%broadcastd-port%"/>     </td></tr>
-<tr><td>URL:</td><td><input type="text" name="broadcastd-URL" id="broadcastd-URL" value="%broadcastd-URL%"/>     </td></tr>
-<tr><td>ThingSpeak channel:</td><td><input type="text" name="broadcastd-thingspeak-channel" id="broadcastd-thingspeak-channel" value="%broadcastd-thingspeak-channel%"/>     </td></tr>
-<tr><td>ThingSpeak RO API key:</td><td><input type="text" name="broadcastd-ro-apikey" id="broadcastd-ro-apikey" value="%broadcastd-ro-apikey%"/>     </td></tr>
-<tr><td><button type="button" onClick="parent.location='/'">Back</button><input type="submit" name="save" value="Save"></td></tr>
-</table>
-</form>
-
-</body>
+	<body>
+		<p><b>Broadcast Daemon Settings</b></p>
+		<form name="broadcasetdform" action="broadcastd.cgi" method="post">
+			<table>
+				<tr><td>HTTP GET broadcast enabled?:</td><td><input type="checkbox" name="broadcastd-enable" id="broadcastd-enable" onclick="di();"/></td></tr>
+				<tr><td>Site:</td><td><input type="text" name="broadcastd-host" id="broadcastd-host" value="%broadcastd-host%"/></td></tr>
+				<tr><td>Port:</td><td><input type="text" name="broadcastd-port" id="broadcastd-port" value="%broadcastd-port%"/></td></tr>
+				<tr><td>URL:</td><td><input type="text" name="broadcastd-URL" id="broadcastd-URL" value="%broadcastd-URL%"/></td></tr>
+				<tr><td>ThingSpeak channel:</td><td><input type="text" name="broadcastd-thingspeak-channel" id="broadcastd-thingspeak-channel" value="%broadcastd-thingspeak-channel%"/>     </td></tr>
+				<tr><td>ThingSpeak RO API key:</td><td><input type="text" name="broadcastd-ro-apikey" id="broadcastd-ro-apikey" value="%broadcastd-ro-apikey%"/></td></tr>
+			</table>
+			</br>
+			<button type="button" onClick="parent.location='/'">Back</button><input type="submit" name="save" value="Save">
+		</form>
+	</body>
 </html>

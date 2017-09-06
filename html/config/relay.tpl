@@ -6,8 +6,7 @@
 		<link rel="stylesheet" type="text/css" href="../style.css">
 	</head>
 	<body>
-		<div id="main">
-		<p><b>Relay Settings</b></p>
+		p><b>Relay Settings</b></p>
 		<form name="relayform" action="relay.cgi" method="post">
 			<table>
 				<tr><td>Relay latching enabled?:</td><td><input type="checkbox" name="relay-latching-enable" id="relay-latching-enable" %relay-latching-enable% /></td></tr>
@@ -15,8 +14,7 @@
 				<tr><td>Relay 2 name:</td><td><input type="text" name="relay2name" id="relay2name" value="%relay2name%"/>     </td></tr>
 			</table>
 			<br/>
-			<button type="button" onClick="parent.location='/'">Back</button>
-			<input type="submit" name="save" value="Save">
+			<button type="button" onClick="parent.location='/'">Back</button><input type="submit" name="save" value="Save">
 		</form>
 	</body>
 </html>

@@ -1,11 +1,11 @@
 <html>
 	<head>
-		<title>Light Comfort settings A</title>
+		<title>Light Comfort settings</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 		<link rel="stylesheet" type="text/css" href="../style.css">
 	</head>
 	<body>
-		<div id="main"><p><b>Light Comfort Settings</b></p>
+		<p><b>Light Comfort Settings</b></p>
 		<form name="sensorform" action="light.cgi" method="post">
 			<table>
 				<tr><td>Light driver enabled?:</td><td><input type="checkbox" name="light_driver_enable" id="light_driver_enable" %light_driver_enable% /></td></tr>
@@ -38,9 +38,17 @@
 				<tr><td>Start led no:</td><td><input type="text" name="flame_1_start_no"  id="flame_1_start_no"  value="%flame_1_start_no%"/></td></tr>
 				<tr><td>Stop  led no:</td><td><input type="text" name="flame_1_stop_no"   id="flame_1_stop_no"   value="%flame_1_stop_no%"/></td></tr>
 			</table>
-			<button type="button" onClick="parent.location='/'">Back</button>
-			<input type="submit" name="save" value="Save">
-			</p>
+
+			<table>
+				<tr><td>Pulsar              (1th) ?:</td><td><input type="checkbox" name="light_pulsar_1_enable" id="light_pulsar_1_enable" %light_pulsar_1_enable% /></td></tr>
+				<tr><td>Start led no:</td><td><input type="text" name="pulsar_1_start_no"  id="pulsar_1_start_no"  value="%pulsar_1_start_no%"/></td></tr>
+				<tr><td>Stop  led no:</td><td><input type="text" name="pulsar_1_stop_no"   id="pulsar_1_stop_no"   value="%pulsar_1_stop_no%"/></td></tr>
+				<tr><td>Delay       :</td><td><input type="text" name="pulsar_1_delay"   id="pulsar_1_delay"   value="%pulsar_1_delay%"/> ms</td></tr>
+				<tr><td>RGB fuzzy   :</td><td><input type="text" name="pulsar_1_fuzzy_rgb_r" id="pulsar_1_fuzzy_rgb_r" value="%pulsar_1_fuzzy_rgb_r%"/>:<input type="text" name="pulsar_1_fuzzy_rgb_g" id="pulsar_1_fuzzy_rgb_g" value="%pulsar_1_fuzzy_rgb_g%"/>:<input type="text" name="pulsar_1_fuzzy_rgb_b" id="pulsar_1_fuzzy_rgb_b" value="%pulsar_1_fuzzy_rgb_b%"/></td></tr>
+				<tr><td>RGB dizzy   :</td><td><input type="text" name="pulsar_1_dizzy_rgb_r" id="pulsar_1_dizzy_rgb_r" value="%pulsar_1_dizzy_rgb_r%"/>:<input type="text" name="pulsar_1_dizzy_rgb_g" id="pulsar_1_dizzy_rgb_g" value="%pulsar_1_dizzy_rgb_g%"/>:<input type="text" name="pulsar_1_dizzy_rgb_b" id="pulsar_1_dizzy_rgb_b" value="%pulsar_1_dizzy_rgb_b%"/></td></tr>
+			</table>
+			</br>
+			<button type="button" onClick="parent.location='/'">Back</button><input type="submit" name="save" value="Save">
 		</form>
 	</body>
 </html>

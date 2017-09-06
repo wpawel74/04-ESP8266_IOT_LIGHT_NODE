@@ -7,7 +7,7 @@
 		<div id="main">
 			<h1>DS18B20 temperature sensor</h1>
 			<p>There are %numds% DS18B20s connected to device,<br />%temperatures%</p>
-		<button onclick="location.href = '/';" class="float-left submit-button" >Home</button>
-	</div>
+			<button onclick="location.href = '/';" class="float-left submit-button" >Home</button>
+		</div>
 	</body>
 </html>

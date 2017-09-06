@@ -1,11 +1,9 @@
 <html>
-	<head>
-		<title>Sensor settings</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		<link rel="stylesheet" type="text/css" href="../style.css">
-	</head>
+	<head><title>Sensor settings</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	<link rel="stylesheet" type="text/css" href="../style.css"></head>
 	<body>
-		<div id="main"><p><b>Sensor Settings</b></p>
+		<p><b>Sensor Settings</b></p>
 		<form name="sensorform" action="sensor.cgi" method="post">
 			<table>
 				<tr><td>DS18B20 enabled?:</td><td><input type="checkbox" name="sensor-ds18b20-enable" id="sensor-ds18b20-enable" %sensor-ds18b20-enable% /></td></tr>
@@ -13,9 +11,7 @@
 				<tr><td>BMP180 enabled?:</td><td><input type="checkbox" name="sensor-bmp180-enable" id="sensor-bmp180-enable" %sensor-bmp180-enable% /></td></tr>
 			</table>
 			<br/>
-			<button type="button" onClick="parent.location='/'">Back</button>
-			<input type="submit" name="save" value="Save">
-			</p>
+			<button type="button" onClick="parent.location='/'">Back</button><input type="submit" name="save" value="Save">
 		</form>
 	</body>
 </html>

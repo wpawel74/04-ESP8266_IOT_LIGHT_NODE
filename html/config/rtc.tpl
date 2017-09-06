@@ -5,14 +5,12 @@
 		<link rel="stylesheet" type="text/css" href="../style.css">
 	</head>
 	<body>
-		<div id="main">
-			<h1>Adjust Date & Time</h1>
-			<form name="rtcform" method="post" action="rtc.cgi">
-				Time <input type="time" name="time" id="time" value="%rtc_time%"><br/>
-				Date <input type="date" name="date" id="date" value="%rtc_date%">
-				<button type="button" onClick="parent.location='/'">Back</button>
-				<input type="submit" name="save" value="Save">
-			</form>
-		</div>
+		<p><b>Adjust Date & Time</b></p>
+		<form name="rtcform" method="post" action="rtc.cgi">
+			Time <input type="time" name="time" id="time" value="%rtc_time%"><br/>
+			Date <input type="date" name="date" id="date" value="%rtc_date%"><br/>
+			</br>
+			<button type="button" onClick="parent.location='/'">Back</button><input type="submit" name="save" value="Save">
+		</form>
 	</body>
 </html>
