@@ -10,6 +10,7 @@
 			<ul>
 				<li><a href="config/light.tpl">LIGHT</a> settings.</li>
 				<li><a href="config/rtc.tpl">RTC</a> settings.</li>
+				<li><a href="config/alarm.tpl">ALARM</a> settings.</li>
 				<li><a href="config/wifi/wifi.tpl">WiFi</a> settings.</li>
 				<li><a href="config/mqtt.tpl">MQTT</a> settings.</li>
 				<li><a href="config/httpd.tpl">HTTP Daemon</a> settings.</li>
