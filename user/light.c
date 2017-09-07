@@ -4,17 +4,12 @@
 #include "io.h"
 #include "ws2812_i2s.h"
 #include "fx.h"
+#include "light.h"
 
 static bool G_on = false;
 static ETSTimer G_light_timer;
 
-typedef enum {
-	SIMPLE_OFF = 0,
-	SIMPLE_ON  = 1,
-	USE_FX = 2
-} light_style;
-
-static void ICACHE_FLASH_ATTR light_set_style( light_style style ){
+void ICACHE_FLASH_ATTR light_set_style( light_style style ){
 	extern char *G_fx_leds;
 	int it = 0;
 

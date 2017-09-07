@@ -48,7 +48,7 @@
 				<tr><td>RGB dizzy   :</td><td><input type="text" name="pulsar_1_dizzy_rgb_r" id="pulsar_1_dizzy_rgb_r" value="%pulsar_1_dizzy_rgb_r%"/>:<input type="text" name="pulsar_1_dizzy_rgb_g" id="pulsar_1_dizzy_rgb_g" value="%pulsar_1_dizzy_rgb_g%"/>:<input type="text" name="pulsar_1_dizzy_rgb_b" id="pulsar_1_dizzy_rgb_b" value="%pulsar_1_dizzy_rgb_b%"/></td></tr>
 			</table>
 			</br>
-			<button type="button" onClick="parent.location='/'">Back</button><input type="submit" name="save" value="Save">
+			<button type="button" onClick="parent.location='/'">Back</button><input type="submit" name="save" value="Save"><input type="submit" name="test" value="Test">
 		</form>
 	</body>
 </html>

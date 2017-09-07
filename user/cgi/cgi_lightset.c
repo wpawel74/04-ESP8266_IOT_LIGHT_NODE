@@ -42,10 +42,19 @@ int ICACHE_FLASH_ATTR cgiLightSettings(HttpdConnData *cd) {
 	cgiRGB( cd, "pulsar_1_dizzy", &config()->fx_pulsar_1_RGB_dizzy );
 	cgiRGB( cd, "pulsar_1_fuzzy", &config()->fx_pulsar_1_RGB_fuzzy );
 
+	if( light_is_enabled() )
+		light_set_style(SIMPLE_OFF);
 	light_fx_reload();
+	if( light_is_enabled() )
+		light_set_style(USE_FX);
 
-	CFG_Save();
-	httpdRedirect(cd, "/");
+	bool save = false;
+	cgiCheckBox( cd, "save", &save );
+	if( save ){
+		CFG_Save();
+		httpdRedirect(cd, "/");
+	} else
+		httpdRedirect(cd, "/config/light.tpl");
 	return HTTPD_CGI_DONE;
 }
 
