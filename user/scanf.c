@@ -119,7 +119,11 @@ static int ICACHE_FLASH_ATTR v_vsscanf(const char *buf, const char *s, va_list a
 		tmp[width] = '\0';
 		buf += width;
 		if (!noassign)
-		    *(va_arg (ap, uint32_t *)) = atoi( tmp );
+			//atob (va_arg (ap, uint32_t *), tmp, base);
+			//
+			// NOTE: only %d format is supproted
+			//
+			*(va_arg (ap, uint32_t *)) = atoi( tmp );
 	    }
 	    if (!noassign)
 		count++;

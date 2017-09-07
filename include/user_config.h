@@ -6,7 +6,7 @@
 #define ICACHE_RAM_ATTR __attribute__((section(".iram0.text")))
 #define ICACHE_RODATA_ATTR __attribute__((section(".irom.text")))
 
-#define CFG_HOLDER				0x00FF55A3
+#define CFG_HOLDER				0x00FF55A7
 #define CFG_LOCATION				0x3C
 
 #define FWVER					"0.7/April 11th 2015"
@@ -70,7 +70,7 @@
 #define LIGHT_COMFORT_UDP_PORT			7777
 #define LIGHT_COMFORT_CHAIN_SIZE		128
 
-#define LIGHT_COMFORT_POLL_TIME			100
+#define LIGHT_COMFORT_POLL_TIME			1000
 
 /* --------------------------------------------------------
  *               features configuration
@@ -80,8 +80,8 @@
 #define CONFIG_BMP180
 #define CONFIG_DS1307
 #define CONFIG_RELAYS
-//#define CONFIG_WS2812
-#define CONFIG_MQTT
+#define CONFIG_WS2812
+//#define CONFIG_MQTT
 
 #endif // _USER_CONFIG_H_
 
