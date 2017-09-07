@@ -42,9 +42,14 @@ struct fx {
 /**
  * initialize f/x module. Method need to be call at beginning (before using: fx_register, fx_unregister, fx_poll)
  */
-void fx_ini(void);
+void fx_ini( void (*rgb_sync)( const char *b, int size ) );
 
 void fx_dei(void);
+
+
+void fx_stop(void);
+
+void fx_start(void);
 
 /**
  * register f/x special effect
@@ -59,7 +64,7 @@ void fx_register( struct fx *fx );
  */
 void fx_deregister( struct fx *fx );
 
-#ifdef	__cplusplus
+#ifdef __cplusplus
 }
 #endif
 

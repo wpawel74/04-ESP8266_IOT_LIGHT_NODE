@@ -4,7 +4,8 @@
 #include "fx.h"
 
 struct fx      *G_fx_head = NULL;
-uint8_t *G_fx_leds = NULL;
+char *G_fx_leds = NULL;
+static void (*G_fx_rgb_sync)( const char *buff, int size ) = NULL;
 static ETSTimer G_fx_timer;
 
 static bool ICACHE_FLASH_ATTR fx_is_registered( const struct fx *fx ){
@@ -82,19 +83,17 @@ static void ICACHE_FLASH_ATTR fx_timer_callback(void *arg){
 		os_printf( "%x.%x.%x ", G_fx_leds[ it * sizeof(struct RGB) ], G_fx_leds[ it * sizeof(struct RGB) + 1 ] , G_fx_leds[ it * sizeof(struct RGB) + 2 ] );
 	os_printf("\n");
 
-#ifdef CONFIG_WS2812
-	ws2812_i2s_push( G_fx_leds, config()->light_chain_size * sizeof(struct RGB) );
-#endif // CONFIG_WS2812
-
+	if( G_fx_rgb_sync )
+		G_fx_rgb_sync( G_fx_leds, config()->light_chain_size * sizeof(struct RGB) );
 }
 
-void ICACHE_FLASH_ATTR fx_ini(void){
+void ICACHE_FLASH_ATTR fx_ini(void (*rgb_sync)( const char *b, int size ) ){
 	if( G_fx_leds == NULL )
 		G_fx_leds = os_malloc( config()->light_chain_size * sizeof(struct RGB) );
 	memset( G_fx_leds, 0x00, config()->light_chain_size * sizeof(struct RGB) );
+	G_fx_rgb_sync = rgb_sync;
 	os_timer_disarm(&G_fx_timer);
 	os_timer_setfn(&G_fx_timer, fx_timer_callback, NULL);
-	os_timer_arm(&G_fx_timer, 1000, 1 ); //config()->fx_poll_time, 1);
 }
 
 void ICACHE_FLASH_ATTR fx_dei(void){
@@ -104,6 +103,13 @@ void ICACHE_FLASH_ATTR fx_dei(void){
 	G_fx_leds = NULL;
 }
 
+void ICACHE_FLASH_ATTR fx_stop(void){
+	os_timer_disarm(&G_fx_timer);
+}
+
+void ICACHE_FLASH_ATTR fx_start(void){
+	os_timer_arm(&G_fx_timer, config()->fx_poll_time, 1);
+}
 
 void ICACHE_FLASH_ATTR fx_register( struct fx *fx ){
 	if( fx_is_registered( fx ) == TRUE ){

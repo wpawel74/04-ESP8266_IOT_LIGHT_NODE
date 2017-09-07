@@ -2,7 +2,6 @@
 #include <user_config.h>
 #include "config.h"
 #include "io.h"
-#include "ws2812.h"
 #include "ws2812_i2s.h"
 #include "fx.h"
 
@@ -12,14 +11,16 @@ static ETSTimer G_light_timer;
 typedef enum {
 	SIMPLE_OFF = 0,
 	SIMPLE_ON  = 1,
+	USE_FX = 2
 } light_style;
 
 static void ICACHE_FLASH_ATTR light_set_style( light_style style ){
-	extern uint8_t *G_fx_leds;
+	extern char *G_fx_leds;
 	int it = 0;
 
 	switch( style ){
 	case SIMPLE_OFF:
+		fx_stop();
 #ifdef CONFIG_WS2812
 		for( it = 0; it < config()->light_chain_size ; it++ ){
 			if( G_fx_leds ){
@@ -45,6 +46,17 @@ static void ICACHE_FLASH_ATTR light_set_style( light_style style ){
 #endif // CONFIG_WS2812
 
 		break;
+	case USE_FX:
+		for( it = 0; it < config()->light_chain_size ; it++ ){
+			if( G_fx_leds ){
+				G_fx_leds[ (it * sizeof(struct RGB)) ] = 0;
+				G_fx_leds[ (it * sizeof(struct RGB)) + 1 ] = 0;
+				G_fx_leds[ (it * sizeof(struct RGB)) + 2 ] = 0;
+			}
+			ws2812_i2s_push( G_fx_leds, config()->light_chain_size * sizeof(struct RGB) );
+		}
+		fx_start();
+		break;
 	default:
 		break;
 	}
@@ -66,10 +78,18 @@ void ICACHE_FLASH_ATTR light_enable_power_supply( bool on ) {
 	}
 }
 
+static bool ICACHE_FLASH_ATTR light_is_fx_active(void){
+	if( config()->fx_simple_1_enable ||
+	    config()->fx_simple_2_enable ||
+	    config()->fx_flames_1_enable ||
+	    config()->fx_pulsar_1_enable ) return true;
+	return false;
+}
+
 static void ICACHE_FLASH_ATTR light_delay_timer_callback(void *arg) {
 	bool	*on = (bool *)arg;
 	if( !(*on) ) light_enable_power_supply( *on );
-	else light_set_style( SIMPLE_ON );
+	else light_set_style( light_is_fx_active() ? USE_FX: SIMPLE_ON );
 }
 
 void ICACHE_FLASH_ATTR light_enable( bool on ) {
@@ -134,13 +154,17 @@ void ICACHE_FLASH_ATTR light_fx_reload(void){
 }
 
 void ICACHE_FLASH_ATTR light_ini(void) {
+	extern void dixy_service_ini( void (*rgb_sync)( const char *b, int size ) );
+	void (*rgb_sync)( const char *b, int size ) = NULL;
+
 	os_timer_disarm(&G_light_timer);
 
 #ifdef CONFIG_WS2812
-	ws2812_init();
+	rgb_sync = ws2812_i2s_push;
+	ws2812_i2s_init();
 #endif // CONFIG_WS2812
 
-	fx_ini();
-
+	dixy_service_ini(rgb_sync);
+	fx_ini(rgb_sync);
 	light_fx_reload();
 }

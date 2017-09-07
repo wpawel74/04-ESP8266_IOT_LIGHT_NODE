@@ -436,7 +436,7 @@ static const uint16_t bitpatterns[16] = {
 };
 #endif
 
-void ws2812_i2s_push( uint8_t * buffer, uint16_t buffersize )
+void ws2812_i2s_push( const char *buffer, int buffersize )
 {
 	uint16_t place;
 

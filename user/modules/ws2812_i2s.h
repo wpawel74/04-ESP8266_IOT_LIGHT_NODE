@@ -29,7 +29,7 @@
 // timing for SK6812 LEDs, always uses 4bit samples
 //#define SK6812
 
-void ICACHE_FLASH_ATTR ws2812_i2s_init(void);
-void ws2812_i2s_push( uint8_t * buffer, uint16_t buffersize ); //Buffersize = Nr LEDs * 3
+void ws2812_i2s_init(void);
+void ws2812_i2s_push( const char *buf, int size ); //size = Nr LEDs * 3
 
 #endif // WS2812I2S_H
