@@ -42,17 +42,17 @@ static void ICACHE_FLASH_ATTR broadcastReading(void *arg) {
 	if(sysCfg.sensor_dht22_enable)  {
 		dht_temp_str(t2);
 		dht_humi_str(t3);
-		os_sprintf(buf,buf2,currREL1State,currREL2State,"N/A",t2,t3);
+		os_sprintf(buf, buf2, io_GPIOGet(GPIO_RELAY1), io_GPIOGet(GPIO_RELAY2), "N/A", t2, t3);
 	}
 	
 	if(sysCfg.sensor_ds18b20_enable)  { // If DS18b20 daemon is enabled, then send up to 3 sensor's data instead
 		ds_str(t1,0);
 		if(numds>1) ds_str(t2,1); //reuse to save space
 		if(numds>2)  ds_str(t3,2); //reuse to save space
-		os_sprintf(buf,buf2,currREL1State,currREL2State,t1,t2,t3);
+		os_sprintf(buf, buf2, io_GPIOGet(GPIO_RELAY1), io_GPIOGet(GPIO_RELAY2), t1, t2, t3);
 	}
 
-	http_get(buf, http_callback_example);	
+	http_get(buf, http_callback_example);
 	os_printf("Sent HTTP GET: %s\n\r",buf);
 }
  
