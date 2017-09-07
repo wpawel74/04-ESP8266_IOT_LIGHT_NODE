@@ -11,9 +11,9 @@
 				<tr><td>Light driver enabled?:</td><td><input type="checkbox" name="light_driver_enable" id="light_driver_enable" %light_driver_enable% /></td></tr>
 				<tr><td>Power Supply Configuration:</td><td>
 				<select name="power_supply_configuration" id="power_supply_configuration">
-					<option value="0" %selected_relay1% >%name_relay1%</option>
-					<option value="1" %selected_relay2% >%name_relay2%</option>
-					<option value="2" %selected_dontcare% >Don't care</option>
+					<option value="0" %selected_dontcare% >Don't care</option>
+					<option value="1" %selected_relay1% >%name_relay1%</option>
+					<option value="2" %selected_relay2% >%name_relay2%</option>
 				</select>
 				<tr><td>No of leds in chain:</td><td><input type="text" name="chain_size"  id="chain_size"  value="%chain_size%"/> ms</td></tr>
 				<tr><td>Delay Power ON  SEQ:</td><td><input type="text" name="delay_power_on"  id="delay_power_on"  value="%delay_power_on%"/> ms</td></tr>
