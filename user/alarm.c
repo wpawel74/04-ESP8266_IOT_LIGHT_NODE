@@ -60,7 +60,7 @@ int ICACHE_FLASH_ATTR alarm_check( iot_alarm *ea, const struct tm *tm ){
 static void ICACHE_FLASH_ATTR bobo(const struct tm *tm, time_t tim){
 	char buff[64];
 	alarm_show_date( buff, sizeof(buff), tm );
-	os_printf("BOBO %ld-> %s \n", tim, buff);
+//	os_printf("BOBO %ld-> %s \n", tim, buff);
 }
 
 static void ICACHE_FLASH_ATTR alarm_timer_callback(void *arg){
