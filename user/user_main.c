@@ -25,7 +25,6 @@ some pictures of cats.
 #include "cgi.h"
 #include "cgiwifi.h"
 #include "cgiflash.h"
-#include "stdout.h"
 #include "auth.h"
 #include "espfs.h"
 #include "captdns.h"
