@@ -13,8 +13,8 @@ typedef struct iot_alarm {
 	uint8_t day;
 } iot_alarm;
 
-void ICACHE_FLASH_ATTR alarm_ini(void);
+void alarm_ini(void);
 
-void ICACHE_FLASH_ATTR alarm_synchro(void);
+void alarm_synchro(void);
 
 #endif // ALARM_H

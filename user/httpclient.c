@@ -36,7 +36,7 @@ typedef struct {
 	http_callback user_callback;
 } request_args;
 
-static char * esp_strdup(const char * str)
+static char *esp_strdup(const char * str)
 {
 	if (str == NULL) {
 		return NULL;

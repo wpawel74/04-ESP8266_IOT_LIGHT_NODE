@@ -4,15 +4,15 @@
 #include "httpd.h"
 #include "fx.h"
 
-void ICACHE_FLASH_ATTR tplInt( char *buff, const char *token, const char *name, int value );
-void ICACHE_FLASH_ATTR tplText( char *buff, const char *token, const char *name, const char *text );
-void ICACHE_FLASH_ATTR tplCheckBox( char *buff, const char *token, const char *name, bool checked );
-void ICACHE_FLASH_ATTR tplRGB( char *buff, const char *token, const RGB *rgb, const char *name );
+void tplInt( char *buff, const char *token, const char *name, int value );
+void tplText( char *buff, const char *token, const char *name, const char *text );
+void tplCheckBox( char *buff, const char *token, const char *name, bool checked );
+void tplRGB( char *buff, const char *token, const RGB *rgb, const char *name );
 
-int ICACHE_FLASH_ATTR cgiCheckBox(HttpdConnData *cd, const char *name, bool *dst);
-int ICACHE_FLASH_ATTR cgiInt(HttpdConnData *cd, const char *name, int32_t *dst);
-int ICACHE_FLASH_ATTR cgiRGB(HttpdConnData *cd, const char *name, RGB *rgb);
-int ICACHE_FLASH_ATTR cgiText(HttpdConnData *cd, const char *name, char *dst, int size);
+int cgiCheckBox(HttpdConnData *cd, const char *name, bool *dst);
+int cgiInt(HttpdConnData *cd, const char *name, int32_t *dst);
+int cgiRGB(HttpdConnData *cd, const char *name, RGB *rgb);
+int cgiText(HttpdConnData *cd, const char *name, char *dst, int size);
 
 int cgiLed(HttpdConnData *cd);
 int tplLed(HttpdConnData *cd, char *token, void **arg);
