@@ -32,13 +32,8 @@ void ICACHE_FLASH_ATTR tplUI(HttpdConnData *connData, char *token, void **arg) {
 
 	os_strcpy(buff, "Unknown");
 
-	if (os_strcmp(token, "relay1name")==0) {
-		os_strcpy(buff, (char *)sysCfg.relay1name);
-	}
-
-	if (os_strcmp(token, "relay2name")==0) {
-		os_strcpy(buff, (char *)sysCfg.relay2name);
-	}
+	tplText( buff, token, "relay1name", sysCfg.relay1name);
+	tplText( buff, token, "relay2name", sysCfg.relay2name);
 
 	httpdSend(connData, buff, -1);
 }
