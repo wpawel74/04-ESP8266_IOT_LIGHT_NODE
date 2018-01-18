@@ -15,7 +15,7 @@ int ICACHE_FLASH_ATTR cgiLight(HttpdConnData *cd) {
 
 	if( httpdFindArg(cd->getArgs, "light", buff, sizeof(buff)) > 0 ){
 		light_enable( atoi(buff) ? true: false );
-		httpdRedirect(cd, "relay.tpl");
+		httpdRedirect(cd, "light.html");
 		return HTTPD_CGI_DONE;
 	}
 

@@ -69,7 +69,7 @@ void ICACHE_FLASH_ATTR CFG_Save()
 
 void ICACHE_FLASH_ATTR CFG_Load()
 {
-	os_printf("\r\nload cfg...(%d bytes)\r\n", sizeof(SYSCFG) );
+	os_printf("load cfg...(%d bytes)\n", sizeof(SYSCFG) );
 	spi_flash_read((CFG_LOCATION + 3) * SPI_FLASH_SEC_SIZE,
 				   (uint32 *)&saveFlag, sizeof(SAVE_FLAG));
 	if (saveFlag.flag == 0) {
@@ -115,10 +115,12 @@ void ICACHE_FLASH_ATTR CFG_Load()
 		os_sprintf((char *)sysCfg.mqtt_user, "%s", MQTT_USER);
 		os_sprintf((char *)sysCfg.mqtt_pass, "%s", MQTT_PASS);
 		sysCfg.mqtt_use_ssl=MQTT_USE_SSL;
+
 		os_sprintf((char *)sysCfg.mqtt_relay_subs_topic, MQTT_RELAY_SUBS_TOPIC, system_get_chip_id());
-		os_sprintf((char *)sysCfg.mqtt_dht22_temp_pub_topic, MQTT_DHT22_TEMP_PUB_TOPIC, system_get_chip_id());
-		os_sprintf((char *)sysCfg.mqtt_dht22_humi_pub_topic, MQTT_DHT22_HUMI_PUB_TOPIC, system_get_chip_id());
-		os_sprintf((char *)sysCfg.mqtt_ds18b20_temp_pub_topic, MQTT_DS18B20_TEMP_PUB_TOPIC, system_get_chip_id());
+//		os_sprintf((char *)sysCfg.mqtt_dht22_temp_pub_topic, MQTT_DHT22_TEMP_PUB_TOPIC, system_get_chip_id());
+//		os_sprintf((char *)sysCfg.mqtt_dht22_humi_pub_topic, MQTT_DHT22_HUMI_PUB_TOPIC, system_get_chip_id());
+
+		os_sprintf((char *)sysCfg.mqtt_sensors_pub_topic, MQTT_SENSORS_PUB_TOPIC, system_get_chip_id());
 
 		sysCfg.sensor_ds18b20_enable = SENSOR_DS18B20_ENABLE;
 		sysCfg.sensor_dht22_enable = SENSOR_DHT22_ENABLE;
@@ -172,7 +174,7 @@ void ICACHE_FLASH_ATTR CFG_Load()
 		sysCfg.alarm_duration = 30000; // 30 s
 
 		CFG_Save();
-		os_printf("default configurations saved\r\n");
+		os_printf("default configurations saved\n");
 	}
 }
 

@@ -1,13 +1,15 @@
-#include "espmissingincludes.h"
-#include "c_types.h"
-#include "user_interface.h"
-#include "espconn.h"
-#include "mem.h"
-#include "osapi.h"
+#include <espmissingincludes.h>
+#include <c_types.h>
+#include <time.h>
+#include <user_interface.h>
+#include <espconn.h>
+#include <mem.h>
+#include <osapi.h>
 #include "io.h"
 #include "broadcastd.h"
 #include "dht22.h"
 #include "ds18b20.h"
+#include "bmp180.h"
 #include "config.h"
 #include "mqtt.h"
 #include "utils.h"
@@ -27,40 +29,44 @@ MQTT_Client mqttClient;
  */
 
 static ETSTimer MQTTbroadcastTimer;
-static ETSTimer broadcastTimer; 
+static ETSTimer broadcastTimer;
 
 static void ICACHE_FLASH_ATTR broadcastReading(void *arg) {
 	char buf[384];
 	char buf2[255];
-	char t1[32];
-	char t2[32];
-	char t3[32];
 
 	//double expand as sysCfg.broadcastd_url cntains placeholders as well
 	os_sprintf(buf2,"http://%s:%d/%s",sysCfg.broadcastd_host,(int)sysCfg.broadcastd_port,sysCfg.broadcastd_url);
 
+#ifdef CONFIG_DTH22
 	if(sysCfg.sensor_dht22_enable)  {
+		char t2[32], t3[32];
 		dht_temp_str(t2);
 		dht_humi_str(t3);
 		os_sprintf(buf, buf2, io_GPIOGet(GPIO_RELAY1), io_GPIOGet(GPIO_RELAY2), "N/A", t2, t3);
 	}
-	
+#endif // CONFIG_DTH22
+
+#ifdef CONFIG_DS18B20
 	if(sysCfg.sensor_ds18b20_enable)  { // If DS18b20 daemon is enabled, then send up to 3 sensor's data instead
+		char t1[32], t2[32], t3[32];
 		ds_str(t1,0);
 		if(numds>1) ds_str(t2,1); //reuse to save space
 		if(numds>2)  ds_str(t3,2); //reuse to save space
 		os_sprintf(buf, buf2, io_GPIOGet(GPIO_RELAY1), io_GPIOGet(GPIO_RELAY2), t1, t2, t3);
 	}
+#endif // CONFIG_DS18B20
 
 	http_get(buf, http_callback_example);
-	os_printf("Sent HTTP GET: %s\n\r",buf);
+	os_printf("Sent HTTP GET: %s\n",buf);
 }
- 
+
 
 static ICACHE_FLASH_ATTR void MQTTbroadcastReading(void* arg){
 	if(sysCfg.mqtt_enable==1) {
 		//os_printf("Sending MQTT\n");
 
+#ifdef CONFIG_DTH22
 		if(sysCfg.sensor_dht22_enable) {
 			struct sensor_reading* result = readDHT();
 			if(result->success) {
@@ -81,7 +87,9 @@ static ICACHE_FLASH_ATTR void MQTTbroadcastReading(void* arg){
 				os_printf("Published \"%s\" to topic \"%s\"\n",temp,topic);
 			}
 		}
+#endif // CONFIG_DTH22
 
+#ifdef CONFIG_DS18B20
 		if(sysCfg.sensor_ds18b20_enable) {
 			struct sensor_reading* result = read_ds18b20();
 			if(result->success) {
@@ -90,14 +98,35 @@ static ICACHE_FLASH_ATTR void MQTTbroadcastReading(void* arg){
 				int len;
 				ds_str(temp,0);
 				len = os_strlen(temp);
-				os_sprintf(topic,"%s",sysCfg.mqtt_ds18b20_temp_pub_topic);
+				os_sprintf(topic,"%s",sysCfg.mqtt_sensors_pub_topic);
 				MQTT_Publish(&mqttClient,topic,temp,len,0,0);
 				os_printf("Published \"%s\" to topic \"%s\"\n",temp,topic);
 			}
 		}
+#endif // CONFIG_DS18B20
+
+		if( config()->sensor_bmp180_enable ){
+			int32_t temp = 0, pressure = 0;
+			char json_msg[ 400  ];
+			const char *json_format = "{"
+                                    "\"sensor\": {"
+                                    "  \"status\": \"online\","
+                                    "  \"identification\": { \"bus\": \"i2c\", \"type\": \"bmp180\" },"
+                                    "  \"description\": { \"location\": \"bedroom\" },"
+                                    "  \"timestamp\": { \"utc\": %ld },"
+                                    "  \"data\": ["
+                                    "    { \"kind\": \"temperature\", \"value\": %ld.%ld, \"unit\": \"celcius\" },"
+                                    "    { \"kind\": \"pressure\", \"value\": %ld, \"unit\": \"pascal\" }"
+                                    "  ]"
+                                    "}"
+                                    "}";
+			BMP180_GetTemperature( &temp );
+			BMP180_GetPressure(OSS_0, &pressure);
+			os_sprintf(json_msg, json_format, time(NULL), temp/10, temp - ((temp/10)*10), pressure );
+			MQTT_Publish(&mqttClient, config()->mqtt_sensors_pub_topic, json_msg, strlen(json_msg), 0, 0);
+		}
 	}
 }
-
 
 void ICACHE_FLASH_ATTR broadcastd_init(void){
 	if(sysCfg.mqtt_enable==1) {
@@ -107,8 +136,8 @@ void ICACHE_FLASH_ATTR broadcastd_init(void){
 	}
 
 	if(sysCfg.broadcastd_enable==1) {
-		os_printf("Arming HTTP broadcast timer\n");  	
+		os_printf("Arming HTTP broadcast timer\n");
 		os_timer_setfn(&broadcastTimer, broadcastReading, NULL);
-		os_timer_arm(&broadcastTimer, 60000, 1);		
+		os_timer_arm(&broadcastTimer, 60000, 1);
 	}
 }

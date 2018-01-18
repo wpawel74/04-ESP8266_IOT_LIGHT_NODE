@@ -28,9 +28,7 @@ void ICACHE_FLASH_ATTR tplMQTT(HttpdConnData *cd, char *token, void **arg) {
 	tplText( buff, token, "mqtt-user", (char *)config()->mqtt_user);
 	tplText( buff, token, "mqtt-pass", (char *)config()->mqtt_pass);
 	tplText( buff, token, "mqtt-relay-subs-topic", (char *)config()->mqtt_relay_subs_topic);
-	tplText( buff, token, "mqtt-dht22-temp-pub-topic", (char *)config()->mqtt_dht22_temp_pub_topic);
-	tplText( buff, token, "mqtt-dht22-humi-pub-topic", (char *)config()->mqtt_dht22_humi_pub_topic);
-	tplText( buff, token, "mqtt-ds18b20-temp-pub-topic", (char *)config()->mqtt_ds18b20_temp_pub_topic);
+	tplText( buff, token, "mqtt-sensors-pub-topic", (char *)config()->mqtt_sensors_pub_topic );
 
 	httpdSend(cd, buff, -1);
 }
@@ -50,9 +48,7 @@ int ICACHE_FLASH_ATTR cgiMQTT(HttpdConnData *cd) {
 	cgiText( cd, "mqtt-user", (char *)config()->mqtt_user, sizeof(config()->mqtt_user) );
 	cgiText( cd, "mqtt-pass", (char *)config()->mqtt_pass, sizeof(config()->mqtt_pass) );
 	cgiText( cd, "mqtt-relay-subs-topic", (char *)config()->mqtt_relay_subs_topic, sizeof(config()->mqtt_relay_subs_topic) );
-	cgiText( cd, "mqtt-dht22-temp-pub-topic", (char *)config()->mqtt_dht22_temp_pub_topic, sizeof(config()->mqtt_dht22_temp_pub_topic) );
-	cgiText( cd, "mqtt-dht22-humi-pub-topic", (char *)config()->mqtt_dht22_humi_pub_topic, sizeof(config()->mqtt_dht22_humi_pub_topic) );
-	cgiText( cd, "mqtt-ds18b20-temp-pub-topic", (char *)config()->mqtt_ds18b20_temp_pub_topic, sizeof(config()->mqtt_ds18b20_temp_pub_topic) );
+	cgiText( cd, "mqtt-sensors-pub-topic", (char *)config()->mqtt_sensors_pub_topic, sizeof(config()->mqtt_sensors_pub_topic) );
 
 	CFG_Save();
 	httpdRedirect(cd, "/");

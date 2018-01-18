@@ -36,19 +36,19 @@ void ICACHE_FLASH_ATTR wifiConnectCb(uint8_t status){
 		} else {
 			MQTT_Disconnect(&mqttClient);
 		}
-	}	
+	}
 }
 
 void ICACHE_FLASH_ATTR mqttConnectedCb(uint32_t *args){
 	MQTT_Client* client = (MQTT_Client*)args;
-	os_printf("MQTT: Connected\r\n");
+	os_printf("MQTT: Connected\n");
 	MQTT_Subscribe(client, (char *)sysCfg.mqtt_relay_subs_topic,0);
 }
 
 void ICACHE_FLASH_ATTR mqttDisconnectedCb(uint32_t *args)
 {
 //	MQTT_Client* client = (MQTT_Client*)args;
-	os_printf("MQTT: Disconnected\r\n");
+	os_printf("MQTT: Disconnected\n");
 }
 
 void ICACHE_FLASH_ATTR mqttDataCb(uint32_t *args, const char* topic, uint32_t topic_len, const char *data, uint32_t lengh){
@@ -65,10 +65,10 @@ void ICACHE_FLASH_ATTR mqttDataCb(uint32_t *args, const char* topic, uint32_t to
 	os_strcpy(strSubsTopic,(char *)sysCfg.mqtt_relay_subs_topic);
 	strSubsTopic[(strlen((char *)sysCfg.mqtt_relay_subs_topic)-1)]=relayNum;
 
-	os_printf("MQTT strSubsTopic: %s, strTopic: %s \r\n", strSubsTopic, strTopic);
+	os_printf("MQTT strSubsTopic: %s, strTopic: %s\n", strSubsTopic, strTopic);
 
 	if (os_strcmp(strSubsTopic,strTopic) == 0 ) {
-		os_printf("Relay %d is now: %s \r\n", relayNum-'0', strData);
+		os_printf("Relay %d is now: %s \n", relayNum-'0', strData);
 
 		if(relayNum=='1')
 			io_GPIOSet(atoi(strData), GPIO_RELAY1);
@@ -82,11 +82,11 @@ void ICACHE_FLASH_ATTR mqttDataCb(uint32_t *args, const char* topic, uint32_t to
 			CFG_Save();
 		}
 	}
-	os_printf("MQTT topic: %s, data: %s \r\n", strTopic, strData);
+	os_printf("MQTT topic: %s, data: %s\n", strTopic, strData);
 }
 
 void ICACHE_FLASH_ATTR mqttPublishedCb(uint32_t *args)
 {
 //    MQTT_Client* client = (MQTT_Client*)args;
-	os_printf("MQTT: Published\r\n");
+	os_printf("MQTT: Published\n");
 }

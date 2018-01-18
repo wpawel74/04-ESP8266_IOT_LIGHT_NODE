@@ -49,9 +49,7 @@
 #define MQTT_PASS				""
 #define MQTT_USE_SSL				0
 #define MQTT_RELAY_SUBS_TOPIC			"esp_%08X/out/relay/#"
-#define MQTT_DHT22_TEMP_PUB_TOPIC		"esp_%08X/in/dht22/temperature"
-#define MQTT_DHT22_HUMI_PUB_TOPIC		"esp_%08X/in/dht22/humidity"
-#define MQTT_DS18B20_TEMP_PUB_TOPIC		"esp_%08X/in/ds18b20/temperature"
+#define MQTT_SENSORS_PUB_TOPIC			"esp_%08X/sensors"
 #define MQTT_BUF_SIZE				255
 #define MQTT_RECONNECT_TIMEOUT			5	/*seconds*/
 #define MQTT_CONNTECT_TIMER			5	/*seconds*/

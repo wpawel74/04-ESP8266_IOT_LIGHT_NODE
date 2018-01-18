@@ -5,7 +5,7 @@
 OUTPUT_TYPE=separate
 #OUTPUT_TYPE=combined
 #OUTPUT_TYPE=ota
-export COMPILE=gcc
+#export COMPILE=gcc
 
 #SPI flash size, in K
 #ESP_SPI_FLASH_SIZE_K=1024
@@ -43,7 +43,7 @@ USE_OPENSDK	?= no
 
 #Esptool.py path and port
 ESPTOOL		?= /opt/Espressif/esptool-py/esptool.py
-ESPPORT		?= /dev/ttyUSB3
+ESPPORT		?= /dev/ttyUSB1
 #ESPDELAY indicates seconds to wait between flashing the two binary images
 ESPDELAY	?= 3
 ESPBAUD		?= 115200
@@ -55,8 +55,8 @@ APPGEN		?= $(SDK_TOOLS)/gen_appbin.py
 TARGET		= httpd
 
 # which modules (subdirectories) of the project to include in compiling
-MODULES		= user driver user/modules mqtt user/cgi user/fx
-EXTRA_INCDIR	= include libesphttpd/include include/driver user/modules mqtt/include user/cgi
+MODULES		= user driver user/modules mqtt user/cgi user/fx user/legacy
+EXTRA_INCDIR	= include libesphttpd/include include/driver user/modules mqtt/include user/cgi user/legacy
 
 # libraries used in this project, mainly provided by the SDK
 LIBS		= c gcc hal phy pp net80211 wpa main lwip crypto

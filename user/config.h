@@ -82,10 +82,8 @@ typedef struct{
 	uint8_t mqtt_user[32];
 	uint8_t mqtt_pass[64];
 	bool mqtt_use_ssl;
-	uint8_t mqtt_relay_subs_topic[64];
-	uint8_t mqtt_dht22_temp_pub_topic[64];
-	uint8_t mqtt_dht22_humi_pub_topic[64];
-	uint8_t mqtt_ds18b20_temp_pub_topic[64];
+	char mqtt_relay_subs_topic[64];
+	char mqtt_sensors_pub_topic[64];
 
 	bool sensor_ds18b20_enable;
 	bool sensor_dht22_enable;

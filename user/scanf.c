@@ -149,7 +149,7 @@ v_sscanf (const char *buf, const char *fmt, ...)
 {
     int             count;
     va_list ap;
-    
+
     va_start (ap, fmt);
     count = v_vsscanf (buf, fmt, ap);
     va_end (ap);
