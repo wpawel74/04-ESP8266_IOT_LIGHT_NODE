@@ -240,10 +240,11 @@ union sdio_slave_status
 //I2S DMA buffer descriptors
 //static struct sdio_queue i2sBufDesc[I2SDMABUFCNT];
 static struct sdio_queue i2sBufDescOut;
+static struct sdio_queue i2sBufDescOut2;
 static struct sdio_queue i2sBufDescZeroes;
 
 static unsigned int i2sZeroes[32];
-static unsigned int i2sBlock[WS_BLOCKSIZE/4];
+static unsigned int i2sBlock[WS_BLOCKSIZE/4][2];
 
 //Queue which contains empty DMA buffers
 //DMA underrun counter
@@ -297,7 +298,16 @@ void ICACHE_FLASH_ATTR ws2812_i2s_init(void)
 	i2sBufDescOut.blocksize = WS_BLOCKSIZE; //Size (in bytes)
 	i2sBufDescOut.buf_ptr=(uint32_t)&i2sBlock[0];
 	i2sBufDescOut.unused=0;
-	i2sBufDescOut.next_link_ptr=(uint32_t)&i2sBufDescZeroes; //At the end, just redirect the DMA to the zero buffer.
+	i2sBufDescOut.next_link_ptr=(uint32_t)&i2sBufDescOut2; //At the end, just redirect the DMA to the zero buffer.
+
+	i2sBufDescOut2.owner = 1;
+	i2sBufDescOut2.eof = 1;
+	i2sBufDescOut2.sub_sof = 0;
+	i2sBufDescOut2.datalen = WS_BLOCKSIZE;  //Size (in bytes)
+	i2sBufDescOut2.blocksize = WS_BLOCKSIZE; //Size (in bytes)
+	i2sBufDescOut2.buf_ptr=(uint32_t)&i2sBlock[0][1];
+	i2sBufDescOut2.unused=0;
+	i2sBufDescOut2.next_link_ptr=(uint32_t)&i2sBufDescZeroes; //At the end, just redirect the DMA to the zero buffer.
 
 	i2sBufDescZeroes.owner = 1;
 	i2sBufDescZeroes.eof = 1;
@@ -315,7 +325,8 @@ void ICACHE_FLASH_ATTR ws2812_i2s_init(void)
 	}
 	for( x = 0; x < WS_BLOCKSIZE/4; x++ )
 	{
-		i2sBlock[x] = 0x00000000;//(x == 0 || x == 999)?0xaa:0x00;
+		i2sBlock[x][0] = 0x00000000;//(x == 0 || x == 999)?0xaa:0x00;
+		i2sBlock[x][1] = 0x00000000;//(x == 0 || x == 999)?0xaa:0x00;
 	
 /*		uint16_t * tt = (uint16_t*)&i2sBlock[x];
 		(*(tt+0)) = 0xA0F0;
@@ -443,7 +454,7 @@ void ws2812_i2s_push( const char *buffer, int buffersize )
 //	while( !ws2812_dma_complete );
 
 #ifdef WS2812_THREE_SAMPLE
-	uint8_t * bufferpl = (uint8_t*)&i2sBlock[0];
+	uint8_t * bufferpl = (uint8_t*)&i2sBlock[0][0];
 
 //	buffersize += 3;
 //	if( buffersize * 4 + 1 > WS_BLOCKSIZE ) return;
@@ -490,10 +501,10 @@ void ws2812_i2s_push( const char *buffer, int buffersize )
 		*(bufferpl++) = STEP3(3);
 	}
 
-	while( bufferpl < &((uint8_t*)i2sBlock)[WS_BLOCKSIZE] ) *(bufferpl++) = 0;
+	while( bufferpl < ((uint8_t*)(&i2sBlock[WS_BLOCKSIZE][1])) ) *(bufferpl++) = 0;
 
 #elif defined(WS2812_FOUR_SAMPLE) || defined(SK6812)
-	uint16_t * bufferpl = (uint16_t*)&i2sBlock[0];
+	uint16_t * bufferpl = (uint16_t*)&i2sBlock[0][0];
 
 	if( buffersize * 4 > WS_BLOCKSIZE ) return;
 
@@ -524,9 +535,9 @@ void ws2812_i2s_push( const char *buffer, int buffersize )
 	i2sBufDescOut.sub_sof = 0;
 	i2sBufDescOut.datalen = sizeout_words*2;  //Size (in bytes)
 	i2sBufDescOut.blocksize = sizeout_words*2; //Size (in bytes)
-	i2sBufDescOut.buf_ptr = (uint32_t)&i2sBlock[0];
+	i2sBufDescOut.buf_ptr = (uint32_t)&i2sBlock[0][0];
 	i2sBufDescOut.unused = 0;
-	i2sBufDescOut.next_link_ptr=(uint32_t)&i2sBufDescZeroes; //At the end, just redirect the DMA to the zero buffer.
+	i2sBufDescOut.next_link_ptr=(uint32_t)&is2BufDescOut2; //i2sBufDescZeroes; //At the end, just redirect the DMA to the zero buffer.
 
 	SET_PERI_REG_MASK(SLC_RX_LINK, SLC_RXLINK_STOP);
 	CLEAR_PERI_REG_MASK(SLC_RX_LINK,SLC_RXLINK_DESCADDR_MASK);
